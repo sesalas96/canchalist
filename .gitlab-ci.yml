@@ -1,0 +1,92 @@
+stages:
+  - build
+  - deploy-dev
+  - deploy-qa
+  - deploy-uat
+  - deploy-prod
+
+variables:
+  EKS_CLUSTER_NAME: CCI_EKS_CLUSTER_NAME
+  EKS_REGION: CCI_EKS_REGION
+  DOCKER_IMAGE: CCI_ECR_IMAGE
+
+before_script:
+  - apk add --no-cache curl jq python3 py3-pip
+  - pip3 install awscli
+  - curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+  - chmod +x ./kubectl
+  - mv ./kubectl /usr/local/bin/kubectl
+  - mkdir -p ~/.kube
+  - aws eks --region $EKS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $DOCKER_IMAGE .
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - docker push $DOCKER_IMAGE
+  only:
+    - master
+
+deploy-dev:
+  stage: deploy-dev
+  image: bitnami/kubectl:latest
+  environment:
+    name: dev
+  script:
+    - kubectl config use-context $EKS_CLUSTER_NAME
+    - kubectl config set-context --current --namespace=dev
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/service.yaml
+  only:
+    - master
+  when: manual
+  allow_failure: false
+
+deploy-qa:
+  stage: deploy-qa
+  image: bitnami/kubectl:latest
+  environment:
+    name: qa
+  script:
+    - kubectl config use-context $EKS_CLUSTER_NAME
+    - kubectl config set-context --current --namespace=qa
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/service.yaml
+  only:
+    - master
+  when: manual
+  allow_failure: false
+
+deploy-uat:
+  stage: deploy-uat
+  image: bitnami/kubectl:latest
+  environment:
+    name: uat
+  script:
+    - kubectl config use-context $EKS_CLUSTER_NAME
+    - kubectl config set-context --current --namespace=uat
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/service.yaml
+  only:
+    - master
+  when: manual
+  allow_failure: false
+
+deploy-prod:
+  stage: deploy-prod
+  image: bitnami/kubectl:latest
+  environment:
+    name: production
+  script:
+    - kubectl config use-context $EKS_CLUSTER_NAME
+    - kubectl config set-context --current --namespace=production
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/service.yaml
+  only:
+    - master
+  when: manual
+  allow_failure: false
