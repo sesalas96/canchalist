@@ -1,9 +1,13 @@
 stages:
   - build
   - deploy-dev
+  - monitor-dev
   - deploy-qa
+  - monitor-qa
   - deploy-uat
+  - monitor-uat
   - deploy-prod
+  - monitor-prod
 
 variables:
   EKS_CLUSTER_NAME: CCI_EKS_CLUSTER_NAME
@@ -25,7 +29,7 @@ build:
   services:
     - docker:dind
   script:
-    - docker build -t $DOCKER_IMAGE .
+    - docker build --cache-from $DOCKER_IMAGE -t $DOCKER_IMAGE .
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - docker push $DOCKER_IMAGE
   only:
@@ -37,10 +41,28 @@ deploy-dev:
   environment:
     name: dev
   script:
-    - kubectl config use-context $EKS_CLUSTER_NAME
-    - kubectl config set-context --current --namespace=dev
-    - kubectl apply -f k8s/deployment.yaml
-    - kubectl apply -f k8s/service.yaml
+    - |
+      kubectl config use-context $EKS_CLUSTER_NAME
+      kubectl config set-context --current --namespace=dev
+      kubectl apply -f k8s/deployment.yaml
+      kubectl apply -f k8s/service.yaml
+  only:
+    - master
+  when: manual
+  allow_failure: false
+
+monitor-dev:
+  stage: monitor-dev
+  image: bitnami/kubectl:latest
+  environment:
+    name: dev
+  script:
+    - |
+      kubectl config use-context $EKS_CLUSTER_NAME
+      kubectl config set-context --current --namespace=dev
+      kubectl port-forward svc/prometheus-server 9090:80 &
+      sleep 5 # Wait for port-forward to establish
+      curl -X POST -H "Content-Type: application/json" -d '{"targets": ["localhost:9090"]}' http://localhost:9090/api/v1/targets
   only:
     - master
   when: manual
@@ -52,10 +74,28 @@ deploy-qa:
   environment:
     name: qa
   script:
-    - kubectl config use-context $EKS_CLUSTER_NAME
-    - kubectl config set-context --current --namespace=qa
-    - kubectl apply -f k8s/deployment.yaml
-    - kubectl apply -f k8s/service.yaml
+    - |
+      kubectl config use-context $EKS_CLUSTER_NAME
+      kubectl config set-context --current --namespace=qa
+      kubectl apply -f k8s/deployment.yaml
+      kubectl apply -f k8s/service.yaml
+  only:
+    - master
+  when: manual
+  allow_failure: false
+
+monitor-qa:
+  stage: monitor-qa
+  image: bitnami/kubectl:latest
+  environment:
+    name: qa
+  script:
+    - |
+      kubectl config use-context $EKS_CLUSTER_NAME
+      kubectl config set-context --current --namespace=qa
+      kubectl port-forward svc/prometheus-server 9090:80 &
+      sleep 5 # Wait for port-forward to establish
+      curl -X POST -H "Content-Type: application/json" -d '{"targets": ["localhost:9090"]}' http://localhost:9090/api/v1/targets
   only:
     - master
   when: manual
@@ -67,10 +107,28 @@ deploy-uat:
   environment:
     name: uat
   script:
-    - kubectl config use-context $EKS_CLUSTER_NAME
-    - kubectl config set-context --current --namespace=uat
-    - kubectl apply -f k8s/deployment.yaml
-    - kubectl apply -f k8s/service.yaml
+    - |
+      kubectl config use-context $EKS_CLUSTER_NAME
+      kubectl config set-context --current --namespace=uat
+      kubectl apply -f k8s/deployment.yaml
+      kubectl apply -f k8s/service.yaml
+  only:
+    - master
+  when: manual
+  allow_failure: false
+
+monitor-uat:
+  stage: monitor-uat
+  image: bitnami/kubectl:latest
+  environment:
+    name: uat
+  script:
+    - |
+      kubectl config use-context $EKS_CLUSTER_NAME
+      kubectl config set-context --current --namespace=uat
+      kubectl port-forward svc/prometheus-server 9090:80 &
+      sleep 5 # Wait for port-forward to establish
+      curl -X POST -H "Content-Type: application/json" -d '{"targets": ["localhost:9090"]}' http://localhost:9090/api/v1/targets
   only:
     - master
   when: manual
@@ -82,11 +140,37 @@ deploy-prod:
   environment:
     name: production
   script:
-    - kubectl config use-context $EKS_CLUSTER_NAME
-    - kubectl config set-context --current --namespace=production
-    - kubectl apply -f k8s/deployment.yaml
-    - kubectl apply -f k8s/service.yaml
+    - |
+      kubectl config use-context $EKS_CLUSTER_NAME
+      kubectl config set-context --current --namespace=production
+      kubectl apply -f k8s/deployment.yaml
+      kubectl apply -f k8s/service.yaml
   only:
     - master
   when: manual
   allow_failure: false
+
+monitor-prod:
+  stage: monitor-prod
+  image: bitnami/kubectl:latest
+  environment:
+    name: production
+  script:
+    - |
+      kubectl config use-context $EKS_CLUSTER_NAME
+      kubectl config set-context --current --namespace=production
+      kubectl port-forward svc/prometheus-server 9090:80 &
+      sleep 5 # Wait for port-forward to establish
+      curl -X POST -H "Content-Type: application/json" -d '{"targets": ["localhost:9090"]}' http://localhost:9090/api/v1/targets
+  only:
+    - master
+  when: manual
+  allow_failure: false
+
+logs:
+  stage: deploy-prod
+  image: bitnami/kubectl:latest
+  script:
+    - kubectl logs -l app=my-app --since=1h
+  when: always
+  allow_failure: true
