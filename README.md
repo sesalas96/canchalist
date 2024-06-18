@@ -1,3 +1,7 @@
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 # CCI Node API
 
 An API built with Express.js and TypeScript.
@@ -10,6 +14,26 @@ An API built with Express.js and TypeScript.
 - [Middleware](#middleware)
 - [Error Handling](#error-handling)
 - [Validation](#validation)
+
+## Prerequisites
+Before you start, ensure you have the following installed on your machine:
+- Node.js (v20 or higher)
+- npm (v6 or higher)
+- Docker 
+- Git
+
+## Tech Stack
+This project uses the following technologies:
+- Node.js: JavaScript runtime environment.
+- TypeScript: Typed superset of JavaScript.
+- Express.js: Web framework for Node.js.
+- Axios: Promise-based HTTP client for the browser and Node.js.
+- Jest: JavaScript testing framework.
+- ESLint: Linter for identifying and fixing problems in JavaScript/TypeScript code.
+- Prettier: Code formatter.
+- GitLab CI: Continuous Integration service provided by GitLab.
+- Docker: Platform for developing, shipping, and running applications.
+
 
 ## Installation
 
@@ -93,3 +117,41 @@ router.post(
 
 export default router;
 ```
+
+## Logging
+Logging is implemented using Winston.
+
+src/logger.ts:
+```typescript
+import winston from 'winston';
+
+// Define the logger configuration and types
+const logger: winston.Logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' }),
+  ],
+});
+
+// Add console transport if not in production environment
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple(),
+  }));
+}
+
+// Export the logger
+export default logger;
+```
+
+To use the logger in your application, you can import it as follows:
+```typescript
+import logger from './logger';
+
+logger.info('Application started');
+logger.error('An error occurred');
+```
+This setup ensures that all logs are recorded in a consistent format and can be easily reviewed.

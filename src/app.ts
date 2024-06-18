@@ -9,6 +9,7 @@ import usersRouter from './routes/users';
 import errorHandler from './middlewares/errorHandler';
 import swaggerUi from 'swagger-ui-express';
 import { specs } from './swagger';
+import logger from './logger';
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(morgan('combined'));
+app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) }}));
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
