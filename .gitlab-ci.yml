@@ -16,11 +16,13 @@ variables:
 
 before_script:
   - apt-get update && apt-get install -y curl jq python3 python3-pip
-  - pip3 install awscli
+  - pip3 install --user awscli
+  - export PATH=$HOME/.local/bin:$PATH
   - curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
   - chmod +x ./kubectl
   - mv ./kubectl /usr/local/bin/kubectl
   - mkdir -p ~/.kube
+  - export EKS_CLUSTER_NAME=$(aws eks list-clusters --region $EKS_REGION --query "clusters[0]" --output text)
   - aws eks --region $EKS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
 
 build:
