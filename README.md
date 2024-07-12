@@ -1,7 +1,3 @@
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 # CCI Node API
 
 An API built with Express.js and TypeScript.
