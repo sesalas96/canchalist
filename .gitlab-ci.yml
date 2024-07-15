@@ -9,6 +9,8 @@ variables:
   EKS_CLUSTER_NAME: cci-web-dev
   EKS_REGION: us-east-1
   DOCKER_IMAGE: 067322660699.dkr.ecr.us-east-1.amazonaws.com/cci-node-template
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
 
 before_script:
   - apt-get update && apt-get install -y curl jq python3 python3-pip unzip
@@ -38,9 +40,10 @@ before_script:
 
 build:
   stage: build
-  image: docker:latest
+  image: docker:20.10.16
   services:
-    - docker:dind
+    - name: docker:20.10.16-dind
+      command: ["--privileged"]
   script:
     - docker build --cache-from $DOCKER_IMAGE -t $DOCKER_IMAGE .
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
