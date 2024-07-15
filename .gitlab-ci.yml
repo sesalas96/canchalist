@@ -44,7 +44,11 @@ build:
   services:
     - name: docker:20.10.16-dind
       command: ["--privileged"]
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
   script:
+    - docker info
     - docker build --cache-from $DOCKER_IMAGE -t $DOCKER_IMAGE .
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - docker push $DOCKER_IMAGE
