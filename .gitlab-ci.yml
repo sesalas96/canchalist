@@ -1,29 +1,41 @@
 stages:
   - build
   - deploy-dev
-  - monitor-dev
   - deploy-qa
-  - monitor-qa
   - deploy-uat
-  - monitor-uat
   - deploy-prod
-  - monitor-prod
 
 variables:
-  EKS_CLUSTER_NAME: CCI_EKS_CLUSTER_NAME
-  EKS_REGION: CCI_EKS_REGION
+  EKS_CLUSTER_NAME: cci-web-dev
+  EKS_REGION: us-east-1
   DOCKER_IMAGE: CCI_ECR_IMAGE
 
 before_script:
-  - apt-get update && apt-get install -y curl jq python3 python3-pip
-  - pip3 install --user awscli
-  - export PATH=$HOME/.local/bin:$PATH
+  - apt-get update && apt-get install -y curl jq python3 python3-pip unzip
+  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  - unzip awscliv2.zip
+  - ./aws/install --bin-dir $HOME/bin --install-dir $HOME/aws-cli --update
+  - export PATH=$HOME/bin:$PATH
+  - mkdir -p $HOME/bin
   - curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
   - chmod +x ./kubectl
-  - mv ./kubectl /usr/local/bin/kubectl
+  - mv ./kubectl $HOME/bin/kubectl
+  - export PATH=$HOME/bin:$PATH
   - mkdir -p ~/.kube
-  - export EKS_CLUSTER_NAME=$(aws eks list-clusters --region $EKS_REGION --query "clusters[0]" --output text)
-  - aws eks --region $EKS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
+  - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+  - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+  - export AWS_DEFAULT_REGION=$EKS_REGION
+  - export AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN
+  - echo "Checking AWS credentials and region"
+  - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
+  - echo "$AWS_DEFAULT_REGION"
+  - export EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
+  - echo "$EKS_CLUSTER_NAME"
+  - kubectl config use-context $EKS_CLUSTER_NAME
+  - kubectl create namespace production || true
+  - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
+  - kubectl cluster-info || (echo "Failed to connect to cluster" && exit 1)
+
 
 build:
   stage: build
@@ -53,23 +65,6 @@ deploy-dev:
   when: manual
   allow_failure: false
 
-monitor-dev:
-  stage: monitor-dev
-  image: bitnami/kubectl:latest
-  environment:
-    name: dev
-  script:
-    - |
-      kubectl config use-context $EKS_CLUSTER_NAME
-      kubectl config set-context --current --namespace=dev
-      kubectl port-forward svc/prometheus-server 9090:80 &
-      sleep 5 # Wait for port-forward to establish
-      curl -X POST -H "Content-Type: application/json" -d '{"targets": ["localhost:9090"]}' http://localhost:9090/api/v1/targets
-  only:
-    - master
-  when: manual
-  allow_failure: false
-
 deploy-qa:
   stage: deploy-qa
   image: bitnami/kubectl:latest
@@ -81,23 +76,6 @@ deploy-qa:
       kubectl config set-context --current --namespace=qa
       kubectl apply -f k8s/deployment.yaml
       kubectl apply -f k8s/service.yaml
-  only:
-    - master
-  when: manual
-  allow_failure: false
-
-monitor-qa:
-  stage: monitor-qa
-  image: bitnami/kubectl:latest
-  environment:
-    name: qa
-  script:
-    - |
-      kubectl config use-context $EKS_CLUSTER_NAME
-      kubectl config set-context --current --namespace=qa
-      kubectl port-forward svc/prometheus-server 9090:80 &
-      sleep 5 # Wait for port-forward to establish
-      curl -X POST -H "Content-Type: application/json" -d '{"targets": ["localhost:9090"]}' http://localhost:9090/api/v1/targets
   only:
     - master
   when: manual
@@ -119,23 +97,6 @@ deploy-uat:
   when: manual
   allow_failure: false
 
-monitor-uat:
-  stage: monitor-uat
-  image: bitnami/kubectl:latest
-  environment:
-    name: uat
-  script:
-    - |
-      kubectl config use-context $EKS_CLUSTER_NAME
-      kubectl config set-context --current --namespace=uat
-      kubectl port-forward svc/prometheus-server 9090:80 &
-      sleep 5 # Wait for port-forward to establish
-      curl -X POST -H "Content-Type: application/json" -d '{"targets": ["localhost:9090"]}' http://localhost:9090/api/v1/targets
-  only:
-    - master
-  when: manual
-  allow_failure: false
-
 deploy-prod:
   stage: deploy-prod
   image: bitnami/kubectl:latest
@@ -151,28 +112,3 @@ deploy-prod:
     - master
   when: manual
   allow_failure: false
-
-monitor-prod:
-  stage: monitor-prod
-  image: bitnami/kubectl:latest
-  environment:
-    name: production
-  script:
-    - |
-      kubectl config use-context $EKS_CLUSTER_NAME
-      kubectl config set-context --current --namespace=production
-      kubectl port-forward svc/prometheus-server 9090:80 &
-      sleep 5 # Wait for port-forward to establish
-      curl -X POST -H "Content-Type: application/json" -d '{"targets": ["localhost:9090"]}' http://localhost:9090/api/v1/targets
-  only:
-    - master
-  when: manual
-  allow_failure: false
-
-logs:
-  stage: deploy-prod
-  image: bitnami/kubectl:latest
-  script:
-    - kubectl logs -l app=my-app --since=1h
-  when: always
-  allow_failure: true
