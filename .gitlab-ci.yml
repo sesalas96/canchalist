@@ -47,11 +47,6 @@ build:
     - docker push $DOCKER_IMAGE
   only:
     - main
-  tags:
-    - docker
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ""
 
 deploy-dev:
   stage: deploy-dev
