@@ -30,7 +30,7 @@ before_script:
   #- export AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN
   - echo "Checking AWS credentials and region"
   # - aws ec2 associate-iam-instance-profile
-  - aws sts assume-role-with-web-identity --role-arn arn:aws:iam::067322660699:role/GitlabRunnerEC2Role --role-session-name glrunnersession 
+  - aws sts assume-role --role-arn arn:aws:iam::067322660699:role/GitlabRunnerEC2Role --role-session-name glrunnersession 
   - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
   - echo "$AWS_DEFAULT_REGION"
   - export EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
