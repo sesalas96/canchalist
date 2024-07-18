@@ -34,7 +34,7 @@ before_script:
   - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
   - kubectl config use-context $EKS_CLUSTER_NAME
   - kubectl create namespace production || true
-  - kubectl cluster-info || (echo "Failed to connect to cluster" && exit 1)
+  - kubectl cluster-info || (echo "Failed to connect to cluste" && exit 1)
 
 
 build:
