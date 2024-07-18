@@ -45,6 +45,7 @@ build:
   image: docker:20.10.16
   services:
     - name: docker:20.10.16-dind
+      alias: docker
       command: ["--privileged"]
   variables:
     DOCKER_DRIVER: overlay2
