@@ -29,12 +29,15 @@ before_script:
   - export AWS_DEFAULT_REGION=$EKS_REGION
   - echo "Checking AWS credentials and region"
   - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
-  - echo "$AWS_DEFAULT_REGION"
-  - echo "$EKS_CLUSTER_NAME"
+  - echo " $AWS_DEFAULT_REGION"
+  - echo " $EKS_CLUSTER_NAME"
   - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
-  - cat ~/.kube/config
-  - kubectl config get-contexts
+  - echo "Kubeconfig file content:"
+  - cat ~/.kube/config # Debugging step to check the kubeconfig file
+  - echo "Available contexts:"
+  - kubectl config get-contexts # Debugging step to check available contexts
   - kubectl config use-context $EKS_CLUSTER_NAME || (echo "Failed to switch context" && exit 1)
+  - kubectl create namespace production || true
   - kubectl cluster-info || (echo "Failed to connect to cluster" && exit 1)
 
 
