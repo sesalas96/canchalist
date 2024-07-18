@@ -41,8 +41,8 @@ before_script:
 
 build:
   stage: build
-  # tags:
-  #   - techtransform
+  tags:
+    - techtransform
   image: docker:20.10.16
   services:
     - name: docker:20.10.16-dind
