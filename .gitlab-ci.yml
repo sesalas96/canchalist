@@ -31,7 +31,7 @@ before_script:
   - echo "$AWS_ACCESS_KEY_ID"
   - echo "$AWS_SECRET_ACCESS_KEY"
   - echo "Checking AWS credentials and region"
-  - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
+  # - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
   - export EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
   - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
   - kubectl config use-context $EKS_CLUSTER_NAME
