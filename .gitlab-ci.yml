@@ -24,15 +24,17 @@ before_script:
   - mv ./kubectl $HOME/bin/kubectl
   - export PATH=$HOME/bin:$PATH
   - mkdir -p ~/.kube
-  - echo "Setting up AWS credentials"
   - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
   - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
   - export AWS_DEFAULT_REGION=$EKS_REGION
   - echo "Checking AWS credentials and region"
   - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
-  - export EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
+  - echo "$AWS_DEFAULT_REGION"
+  - echo "$EKS_CLUSTER_NAME"
   - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
-  - kubectl config use-context $EKS_CLUSTER_NAME
+  - cat ~/.kube/config
+  - kubectl config get-contexts
+  - kubectl config use-context $EKS_CLUSTER_NAME || (echo "Failed to switch context" && exit 1)
   - kubectl create namespace production || true
   - kubectl cluster-info || (echo "Failed to connect to cluster" && exit 1)
 
