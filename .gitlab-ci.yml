@@ -37,8 +37,6 @@ before_script:
   - echo "Available contexts:"
   - kubectl config get-contexts # Debugging step to check available contexts
   - kubectl config use-context $EKS_CLUSTER_NAME || (echo "Failed to switch context" && exit 1)
-  - kubectl create namespace production || true
-  - kubectl cluster-info || (echo "Failed to connect to cluster" && exit 1)
 
 
 build:
