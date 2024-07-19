@@ -59,8 +59,10 @@ deploy-dev:
     - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
     - export AWS_DEFAULT_REGION=$EKS_REGION
     - aws eks --region $EKS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
-    - export KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME | head -n 1)
+    - cat ~/.kube/config
+    - kubectl config view
   script:
+    - KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME | head -n 1)
     - echo "$KUBE_CONTEXT"
     - kubectl config use-context "$KUBE_CONTEXT" || (echo "Failed to switch context" && exit 1)
     - kubectl config set-context --current --namespace=dev
