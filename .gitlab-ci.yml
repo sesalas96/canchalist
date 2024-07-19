@@ -59,7 +59,7 @@ build:
           break;
         fi;
         echo "Waiting for Docker to be ready, attempt $i...";
-        sleep 2;
+        sleep 3;
       done
     - docker info
     - docker build --cache-from $DOCKER_IMAGE -t $DOCKER_IMAGE .
