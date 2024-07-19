@@ -11,7 +11,7 @@ variables:
   DOCKER_IMAGE: 067322660699.dkr.ecr.us-east-1.amazonaws.com/cci-node-template
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_HOST: tcp://docker:2375
 
 before_script:
   - apt-get update && apt-get install -y curl jq python3 python3-pip unzip
@@ -41,7 +41,8 @@ before_script:
 build:
   stage: build
   image: docker:23.0.2-alpine3.17
-  tags: [ techtransform ]
+  tags:
+    - techtransform
   services:
     - name: docker:23.0.2-dind-alpine3.17
       alias: docker
@@ -49,7 +50,7 @@ build:
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-    DOCKER_HOST: tcp://localhost:2375
+    DOCKER_HOST: tcp://docker:2375
   before_script:
     - docker --version
     - until docker info; do sleep 1; done
