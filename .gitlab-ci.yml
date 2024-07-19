@@ -54,6 +54,7 @@ build:
   script:
     - echo "Waiting for Docker daemon to be ready..."
     - docker info
+    - sleep 20
     - docker build --cache-from $DOCKER_IMAGE -t $DOCKER_IMAGE .
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - docker push $DOCKER_IMAGE
