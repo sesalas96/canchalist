@@ -41,8 +41,6 @@ before_script:
 build:
   stage: build
   image: docker:23.0.2-alpine3.17
-  tags:
-    - techtransform
   services:
     - name: docker:23.0.2-dind-alpine3.17
       alias: docker
