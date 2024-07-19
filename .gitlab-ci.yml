@@ -11,7 +11,7 @@ variables:
   DOCKER_IMAGE: 067322660699.dkr.ecr.us-east-1.amazonaws.com/cci-node-template
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_HOST: tcp://docker:2375
 
 before_script:
   - apt-get update && apt-get install -y curl jq python3 python3-pip unzip
@@ -50,7 +50,7 @@ build:
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-    DOCKER_HOST: tcp://localhost:2375
+    DOCKER_HOST: tcp://docker:2375
   script:
     - echo "Waiting for Docker daemon to be ready..."
     - for i in $(seq 1 30); do
