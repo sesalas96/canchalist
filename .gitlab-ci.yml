@@ -53,14 +53,6 @@ build:
     DOCKER_HOST: tcp://docker:2375
   script:
     - echo "Waiting for Docker daemon to be ready..."
-    - for i in $(seq 1 30); do
-        if docker info > /dev/null 2>&1; then
-          echo "Docker is ready!";
-          break;
-        fi;
-        echo "Waiting for Docker to be ready, attempt $i...";
-        sleep 2;
-      done
     - docker info
     - docker build --cache-from $DOCKER_IMAGE -t $DOCKER_IMAGE .
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
