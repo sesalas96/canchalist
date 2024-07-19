@@ -11,13 +11,13 @@ variables:
   DOCKER_IMAGE: 067322660699.dkr.ecr.us-east-1.amazonaws.com/cci-node-template
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
+
 before_script:
   - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
   - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
   - export AWS_DEFAULT_REGION=$EKS_REGION
   - echo "Checking AWS credentials and region"
   - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
-
 
 build:
   stage: build
@@ -30,13 +30,6 @@ build:
       command: ["--privileged", "--insecure-registry=git.ipnms.net:5050"]
   before_script:
     - mkdir -p ~/.kube
-    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-    - export AWS_DEFAULT_REGION=$EKS_REGION
-    - echo "Checking AWS credentials and region"
-    - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
-    - echo "$AWS_DEFAULT_REGION"
-    - echo "$EKS_CLUSTER_NAME"
     - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
     - echo "Kubeconfig file content:"
     - cat ~/.kube/config # Debugging step to check the kubeconfig file
