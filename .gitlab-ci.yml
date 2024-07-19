@@ -46,13 +46,12 @@ build:
       command: ["--privileged"]
   before_script:
     - echo "Waiting for Docker daemon to be ready..."
-    - echo "$USER"
     - for i in $(seq 1 30); do
         if docker info > /dev/null 2>&1; then
           echo "Docker is ready!";
           break;
         fi;
-        echo "Waiting for Docker to be ready, attempt $i...";
+        echo "Waiting for Docker to be ready, attempt $i... ";
         sleep 1;
       done
   script:
