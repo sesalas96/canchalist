@@ -22,6 +22,16 @@ FROM node:20
 # Set the working directory
 WORKDIR /app
 
+# Install dependencies and tools
+RUN apt-get update && apt-get install -y curl jq python3 python3-pip unzip \
+    && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update \
+    && rm -rf awscliv2.zip aws \
+    && curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl" \
+    && chmod +x ./kubectl \
+    && mv ./kubectl /usr/local/bin/kubectl
+
 # Copy only the production dependencies
 COPY package*.json ./
 RUN npm ci --omit=dev
@@ -45,4 +55,4 @@ USER appuser
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s CMD curl -f http://localhost:3000/health || exit 1
 
 # Command to run the application
-CMD ["node", "dist/app.js"]
+CMD ["npm", "run", "start:nextjs"]
