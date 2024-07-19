@@ -40,6 +40,8 @@ before_script:
 build:
   stage: build
   image: docker:20.10.16
+  tags:
+    - techtransform
   services:
     - name: docker:20.10.16-dind
       alias: docker
