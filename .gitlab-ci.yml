@@ -43,7 +43,7 @@ build:
     - kubectl config get-contexts # Debugging step to check available contexts
   script:
     - docker build -t $DOCKER_IMAGE .
-    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 067322660699.dkr.ecr.region.amazonaws.com
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 067322660699.dkr.ecr.us-east-1.amazonaws.com
     - docker push $DOCKER_IMAGE
   only:
     - main
