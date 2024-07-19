@@ -12,31 +12,6 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
 
-before_script:
-  # - apt-get update && apt-get install -y curl jq python3 python3-pip unzip
-  # - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  # - unzip awscliv2.zip
-  # - ./aws/install --bin-dir $HOME/bin --install-dir $HOME/aws-cli --update || true
-  # - export PATH=$HOME/bin:$PATH
-  # - mkdir -p $HOME/bin
-  # - curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-  # - chmod +x ./kubectl
-  # - mv ./kubectl $HOME/bin/kubectl
-  # - export PATH=$HOME/bin:$PATH
-  # - mkdir -p ~/.kube
-  # - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-  # - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-  # - export AWS_DEFAULT_REGION=$EKS_REGION
-  # - echo "Checking AWS credentials and region"
-  # - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
-  # - echo "$AWS_DEFAULT_REGION"
-  # - echo "$EKS_CLUSTER_NAME"
-  # - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
-  # - echo "Kubeconfig file content:"
-  # - cat ~/.kube/config # Debugging step to check the kubeconfig file
-  # - echo "Available contexts:"
-  # - kubectl config get-contexts # Debugging step to check available contexts
-
 build:
   stage: build
   image: docker:20.10.16
@@ -46,9 +21,22 @@ build:
     - name: docker:20.10.16-dind
       alias: docker
       command: ["--privileged", "--insecure-registry=git.ipnms.net:5050"]
+  before_script:
+    - mkdir -p ~/.kube
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+    - export AWS_DEFAULT_REGION=$EKS_REGION
+    - echo "Checking AWS credentials and region"
+    - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
+    - echo "$AWS_DEFAULT_REGION"
+    - echo "$EKS_CLUSTER_NAME"
+    - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
+    - echo "Kubeconfig file content:"
+    - cat ~/.kube/config # Debugging step to check the kubeconfig file
+    - echo "Available contexts:"
+    - kubectl config get-contexts # Debugging step to check available contexts
   script:
     - docker build -t $DOCKER_IMAGE .
-    - echo "$CI_REGISTRY_PASSWORD"
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - docker push $DOCKER_IMAGE
   only:
