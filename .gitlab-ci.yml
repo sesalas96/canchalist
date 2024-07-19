@@ -53,6 +53,9 @@ deploy-dev:
   image: bitnami/kubectl:latest
   environment:
     name: dev
+  before_script:
+    - mkdir -p ~/.kube
+    - aws eks --region $EKS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
   script:
     - KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME | head -n 1)
     - echo "$KUBE_CONTEXT"
