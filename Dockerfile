@@ -1,11 +1,12 @@
 # Stage 1: Build the application
 FROM node:20 AS build
 
-RUN apk update && apk add --no-cache \
+# Install dependencies
+RUN apt-get update && apt-get install -y \
     curl \
     jq \
     python3 \
-    py3-pip \
+    python3-pip \
     unzip \
     && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
     && unzip awscliv2.zip \
