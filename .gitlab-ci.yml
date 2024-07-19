@@ -1,11 +1,42 @@
 stages:
   - build
+  - deploy-dev
+  - deploy-qa
+  - deploy-stage
+  - deploy-prod
 
 variables:
+  EKS_CLUSTER_NAME: cci-web-dev
+  EKS_REGION: us-east-1
+  DOCKER_IMAGE: 067322660699.dkr.ecr.us-east-1.amazonaws.com/cci-node-template
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
   DOCKER_HOST: tcp://docker:2375
-  DOCKER_IMAGE: your-registry/your-image:latest
+
+before_script:
+  - apt-get update && apt-get install -y curl jq python3 python3-pip unzip
+  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  - unzip awscliv2.zip
+  - ./aws/install --bin-dir $HOME/bin --install-dir $HOME/aws-cli --update || true
+  - export PATH=$HOME/bin:$PATH
+  - mkdir -p $HOME/bin
+  - curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+  - chmod +x ./kubectl
+  - mv ./kubectl $HOME/bin/kubectl
+  - export PATH=$HOME/bin:$PATH
+  - mkdir -p ~/.kube
+  - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+  - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+  - export AWS_DEFAULT_REGION=$EKS_REGION
+  - echo "Checking AWS credentials and region"
+  - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
+  - echo "$AWS_DEFAULT_REGION"
+  - echo "$EKS_CLUSTER_NAME"
+  - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
+  - echo "Kubeconfig file content:"
+  - cat ~/.kube/config # Debugging step to check the kubeconfig file
+  - echo "Available contexts:"
+  - kubectl config get-contexts # Debugging step to check available contexts
 
 build:
   stage: build
@@ -16,12 +47,84 @@ build:
     - name: docker:23.0.2-dind-alpine3.17
       alias: docker
       command: ["--privileged", "--host=tcp://0.0.0.0:2375"]
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2375
   before_script:
     - docker --version
     - until docker info; do sleep 1; done
   script:
-    - docker build -t $DOCKER_IMAGE .
+    - docker build --cache-from $DOCKER_IMAGE -t $DOCKER_IMAGE .
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - docker push $DOCKER_IMAGE
   only:
     - main
+
+deploy-dev:
+  stage: deploy-dev
+  image: bitnami/kubectl:latest
+  environment:
+    name: dev
+  script:
+    - export KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME)
+    - echo "$KUBE_CONTEXT"
+    - kubectl config use-context $KUBE_CONTEXT || (echo "Failed to switch context" && exit 1)
+    - kubectl config set-context --current --namespace=dev
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/service.yaml
+  only:
+    - main
+  when: manual
+  allow_failure: false
+
+deploy-qa:
+  stage: deploy-qa
+  image: bitnami/kubectl:latest
+  environment:
+    name: qa
+  script:
+    - export KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME)
+    - echo "$KUBE_CONTEXT"
+    - kubectl config use-context $KUBE_CONTEXT || (echo "Failed to switch context" && exit 1)
+    - kubectl config set-context --current --namespace=qa
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/service.yaml
+  only:
+    - main
+  when: manual
+  allow_failure: false
+
+deploy-stage:
+  stage: deploy-stage
+  image: bitnami/kubectl:latest
+  environment:
+    name: stage
+  script:
+    - export KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME)
+    - echo "$KUBE_CONTEXT"
+    - kubectl config use-context $KUBE_CONTEXT || (echo "Failed to switch context" && exit 1)
+    - kubectl config set-context --current --namespace=stage
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/service.yaml
+  only:
+    - main
+  when: manual
+  allow_failure: false
+
+deploy-prod:
+  stage: deploy-prod
+  image: bitnami/kubectl:latest
+  environment:
+    name: production
+  script:
+    - export KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME)
+    - echo "$KUBE_CONTEXT"
+    - kubectl config use-context $KUBE_CONTEXT || (echo "Failed to switch context" && exit 1)
+    - kubectl config set-context --current --namespace=production
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/service.yaml
+  only:
+    - main
+  when: manual
+  allow_failure: false
