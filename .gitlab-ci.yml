@@ -18,6 +18,12 @@ before_script:
   - export AWS_DEFAULT_REGION=$EKS_REGION
   - echo "Checking AWS credentials and region"
   - aws sts get-caller-identity || (echo "AWS credentials are invalid" && exit 1)
+  - mkdir -p ~/.kube
+  - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
+  - echo "Kubeconfig file content:"
+  - cat ~/.kube/config # Debugging step to check the kubeconfig file
+  - echo "Available contexts:"
+  - kubectl config get-contexts # Debugging step to check available contexts
 
 build:
   stage: build
@@ -28,13 +34,6 @@ build:
     - name: docker:20.10.16-dind
       alias: docker
       command: ["--privileged", "--insecure-registry=git.ipnms.net:5050"]
-  before_script:
-    - mkdir -p ~/.kube
-    - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME || (echo "Failed to update kubeconfig" && exit 1)
-    - echo "Kubeconfig file content:"
-    - cat ~/.kube/config # Debugging step to check the kubeconfig file
-    - echo "Available contexts:"
-    - kubectl config get-contexts # Debugging step to check available contexts
   script:
     - docker build -t $DOCKER_IMAGE .
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
