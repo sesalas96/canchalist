@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: cci-web-container
-        image: 533267147118.dkr.ecr.us-east-1.amazonaws.com/cci-web:${IMAGE_TAG}
+        image: ${IMAGE_PATH}
         ports:
         - containerPort: 8080
         env:
