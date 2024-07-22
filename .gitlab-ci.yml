@@ -66,14 +66,14 @@ deploy-dev:
   script:
     - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
     - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-    - export AWS_DEFAULT_REGION=$EKS_REGION
+    - export IMAGE_TAG=$DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA
     - KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME | head -n 1)
     - echo "$KUBE_CONTEXT"
     - kubectl config use-context "$KUBE_CONTEXT" || (echo "Failed to switch context" && exit 1)
     - kubectl config set-context --current --namespace=dev
     - kubectl get nodes
-    - kubectl apply -f k8s/deployment.yaml --validate=false
-    - kubectl apply -f k8s/service.yaml
+    - envsubts < k8s/deployment.yaml | kubectl apply
+    - envsubts < k8s/service.yaml | kubectl apply
   only:
     - main
   when: manual
