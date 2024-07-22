@@ -8,9 +8,10 @@ stages:
 variables:
   EKS_CLUSTER_NAME: cci-web-dev
   EKS_REGION: us-east-1
-  DOCKER_IMAGE: 067322660699.dkr.ecr.us-east-1.amazonaws.com/cci-node-template
+  DOCKER_IMAGE_REPO: 067322660699.dkr.ecr.us-east-1.amazonaws.com/cci-node-template
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
+  DOCKER_BASE_TAG: cci-node-template
 
 build:
   stage: build
@@ -42,9 +43,9 @@ build:
     - echo "Available contexts:"
     - kubectl config get-contexts # Debugging step to check available contexts
   script:
-    - docker build -t $DOCKER_IMAGE .
-    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 067322660699.dkr.ecr.us-east-1.amazonaws.com
-    - docker push $DOCKER_IMAGE
+    - docker build -t $DOCKER_BASE_TAG:$CI_COMMIT_REF_SLUG .
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $DOCKER_IMAGE_REPO
+    - docker push $DOCKER_BASE_TAG:$CI_COMMIT_REF_SLUG
   only:
     - main
 
