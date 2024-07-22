@@ -43,10 +43,10 @@ build:
     - echo "Available contexts:"
     - kubectl config get-contexts # Debugging step to check available contexts
   script:
-    - "echo \"Tag: $DOCKER_BASE_TAG/$CI_COMMIT_REF_SLUG\""
-    - docker build -t $DOCKER_BASE_TAG/$CI_COMMIT_REF_SLUG .
+    - "echo \"Tag: $DOCKER_IMAGE_REPO:$CI_COMMIT_REF_SLUG\""
+    - docker build -t $DOCKER_IMAGE_REPO:$CI_COMMIT_REF_SLUG .
     - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $DOCKER_IMAGE_REPO
-    - docker push $DOCKER_BASE_TAG/$CI_COMMIT_REF_SLUG
+    - docker push $DOCKER_IMAGE_REPO:$CI_COMMIT_REF_SLUG
   only:
     - main
 
