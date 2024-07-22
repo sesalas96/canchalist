@@ -72,8 +72,8 @@ deploy-dev:
     - kubectl config use-context "$KUBE_CONTEXT" || (echo "Failed to switch context" && exit 1)
     - kubectl config set-context --current --namespace=dev
     - kubectl get nodes
-    - envsubst < k8s/deployment.yaml | kubectl apply
-    - envsubst < k8s/service.yaml | kubectl apply
+    - envsubst < k8s/deployment.yaml | kubectl apply -f -
+    - envsubst < k8s/service.yaml | kubectl apply -f -
   only:
     - main
   when: manual
