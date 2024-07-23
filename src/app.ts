@@ -34,11 +34,12 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 // Swagger API documentation
+// Swagger API documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // Error handling middleware
 app.use(errorHandler);
 
-app.listen(port, '0.0.0.0', () => {
+app.listen({port: port, host: '::'}, () => {
   console.log(`App listening on port: ${port}`);
 });
