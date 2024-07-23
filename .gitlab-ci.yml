@@ -148,3 +148,10 @@ deploy-prod:
     - main
   when: manual
   allow_failure: false
+
+trigger-deploy:
+  stage: deploy-prod
+  script:
+    - curl -X POST -F token=glptt-4eab478d29ba4435a968f701d800932215f33212 -F ref=main https://gitlab.example.com/api/v4/projects/cci-node-template/trigger/pipeline
+  only:
+    - web
