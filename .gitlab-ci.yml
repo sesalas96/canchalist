@@ -1,5 +1,6 @@
 stages:
   - build
+  - check-jira
   - deploy-dev
   - deploy-qa
   - deploy-stage
@@ -11,6 +12,9 @@ variables:
   DOCKER_IMAGE_REPO: 067322660699.dkr.ecr.us-east-1.amazonaws.com/cci-node-template
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
+  JIRA_BASE_URL: "https://jirasoft.consolidated.com/"
+  JIRA_PROJECT_KEY: "DTPR"
+  JIRA_PAT: "NjQ0NjU5NjYyMDAwOtp1ETuto83ov/idBIBUsgadPbkM"
 
 build:
   stage: build
@@ -46,6 +50,25 @@ build:
     - docker build -t $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA .
     - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $DOCKER_IMAGE_REPO
     - docker push $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA
+  only:
+    - main
+
+check-jira:
+  stage: check-jira
+  image: curlimages/curl:latest
+  script:
+    - >
+      JIRA_ISSUE_STATUS=$(curl -s -H "Authorization: Bearer $JIRA_PAT" -X GET
+      -H "Content-Type: application/json"
+      "$JIRA_BASE_URL/rest/api/2/search?jql=project=$JIRA_PROJECT_KEY%20AND%20status%20in%20(Ready%20for%20Deployment)")
+    - echo "$JIRA_ISSUE_STATUS"
+    - >
+      if [[ "$JIRA_ISSUE_STATUS" == *"Ready for Deployment"* ]]; then
+        echo "Jira issues are ready for deployment."
+      else
+        echo "No Jira issues are ready for deployment." >&2
+        exit 1
+      fi
   only:
     - main
 
