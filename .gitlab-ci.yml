@@ -60,7 +60,7 @@ check-jira:
     - >
       JIRA_ISSUE_STATUS=$(curl -s -H "Authorization: Bearer $JIRA_PAT" -X GET
       -H "Content-Type: application/json"
-      "$JIRA_BASE_URL/rest/api/2/search?jql=project=$JIRA_PROJECT_KEY%20AND%20status%20in%20(Ready%20for%20Deployment)")
+      "$JIRA_BASE_URL/rest/api/2/search?jql=project=$JIRA_PROJECT_KEY%20AND%20status%20in%20(Testing)")
     - echo "$JIRA_ISSUE_STATUS"
     - >
       if [[ "$JIRA_ISSUE_STATUS" == *"Ready for Deployment"* ]]; then
