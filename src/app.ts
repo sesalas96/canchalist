@@ -14,7 +14,7 @@ import logger from './logger';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = Number(process.env.PORT) || 3000;
 
 // Middleware
 app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) }}));
@@ -40,6 +40,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 // Error handling middleware
 app.use(errorHandler);
 
-app.listen({port: port, host: '::'}, () => {
+app.listen(port, () => {
   console.log(`App listening on port: ${port}`);
 });
