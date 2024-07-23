@@ -39,6 +39,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 // Error handling middleware
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`App listening on port: ${port}`);
 });

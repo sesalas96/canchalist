@@ -5,7 +5,7 @@ metadata:
   labels:
     app: cci-web
 spec:
-  replicas: 3  # Number of replicas
+  replicas: 1  # Number of replicas
   selector:
     matchLabels:
       app: cci-web
@@ -18,7 +18,7 @@ spec:
       - name: cci-web-container
         image: ${IMAGE_PATH}
         ports:
-        - containerPort: 8080
+        - containerPort: 3000
         env:
           - name: SOME_ENV_VARIABLE
             value: "some_value"
