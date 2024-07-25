@@ -74,8 +74,8 @@ iac-security:
   image: python:3.9-slim
   before_script:
     - apt-get update && apt-get install -y python3-pip
-    - pip3 install --user checkov
-    - export PATH=$HOME/.local/bin:$PATH
+    - pip3 install --user --upgrade pip
+    - pip3 install checkov
   script:
     - checkov -d . | tee iac_security.log
   artifacts:
