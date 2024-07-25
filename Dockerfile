@@ -16,7 +16,7 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Test the application
+# Run Unit Tests
 RUN npm run test
 
 # Stage 2: Run the application
@@ -45,7 +45,7 @@ RUN chown -R appuser:appuser /app
 USER appuser
 
 # Add a health check
-# HEALTHCHECK --interval=30s --timeout=10s --start-period=5s CMD curl -f http://0.0.0.0:3000/health || exit 1
+# HEALTHCHECK --interval=30s --timeout=10s --start-period=5s CMD curl -f http://localhost:3000/health || exit 1
 
 # Command to run the application
 CMD ["npm", "run", "start"]
