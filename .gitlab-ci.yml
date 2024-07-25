@@ -1,4 +1,5 @@
 stages:
+  - fetch-flags
   - snyk
   - sast
   - dependency-scanning
@@ -25,7 +26,29 @@ variables:
   FEATURE_FLAG_DEPENDENCY_SCANNING: "false"
   FEATURE_FLAG_CONTAINER_SCANNING: "false"
   FEATURE_FLAG_CHECK_JIRA: "false"
+  FEATURE_FLAG_FLAGD: "false"
 
+fetch-flags:
+  stage: fetch-flags
+  image: curlimages/curl:latest
+  script: |
+    - if [[ "FEATURE_FLAG_FLAGD" == "true" ]]; then
+      # Fetch feature flags configuration
+      curl -s -O https://raw.githubusercontent.com/your-repo/feature-flags.json
+
+      # Read and evaluate each feature flag using flagd
+      FLAGS=$(jq -r 'to_entries[] | "\(.key)=\(.value)"' feature-flags.json)
+      for flag in $FLAGS; do
+        KEY=$(echo $flag | cut -d'=' -f1)
+        VALUE=$(echo $flag | cut -d'=' -f2)
+        FLAG_VALUE=$(curl -s "$FLAGD_SERVER_URL/v1/evaluate/json" -H "Content-Type: application/json" -d "{\"flagKey\": \"$VALUE\", \"context\": {}}" | jq -r '.value')
+        export "FEATURE_FLAG_$KEY=$FLAG_VALUE"
+        echo "FEATURE_FLAG_$KEY=$FLAG_VALUE" >> flags.env
+      done
+    fi
+  artifacts:
+    reports:
+      dotenv: .env
 snyk:
   stage: snyk
   image: snyk/snyk-cli:docker
