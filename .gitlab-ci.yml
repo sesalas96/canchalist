@@ -21,20 +21,16 @@ variables:
   JIRA_PROJECT_KEY: "DTPR"
   JIRA_PAT: "NjQ0NjU5NjYyMDAwOtp1ETuto83ov/idBIBUsgadPbkM"
   SNYK_TOKEN: "SNYK_TOKEN"
-  FEATURE_FLAG_SNYK: "false"
-  FEATURE_FLAG_SAST: "false"
-  FEATURE_FLAG_DEPENDENCY_SCANNING: "false"
-  FEATURE_FLAG_CONTAINER_SCANNING: "false"
-  FEATURE_FLAG_CHECK_JIRA: "false"
-  FEATURE_FLAG_FLAGD: "false"
+  FLAGD_SERVER_URL: "http://flagd-server:8013"
+  FEATURE_FLAG_FLAGD: "true"  # Assume this is set to true for testing
 
 fetch-flags:
   stage: fetch-flags
   image: curlimages/curl:latest
   script: |
     if [[ "$FEATURE_FLAG_FLAGD" == "true" ]]; then
-      # Fetch feature flags configuration
-      curl -s -O https://raw.githubusercontent.com/your-repo/feature-flags.json
+      # Fetch feature flags configuration from GitLab
+      curl -s --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/repository/files/feature-flags.json/raw?ref=main" -o feature-flags.json
 
       # Read and evaluate each feature flag using flagd
       FLAGS=$(jq -r 'to_entries[] | "\(.key)=\(.value)"' feature-flags.json)
@@ -49,64 +45,73 @@ fetch-flags:
   artifacts:
     reports:
       dotenv: flags.env
+
 snyk:
   stage: snyk
   image: snyk/snyk-cli:docker
-  script:
-    - if [[ "$FEATURE_FLAG_SNYK" == "true" ]]; then
-        snyk auth $SNYK_TOKEN;
-        snyk test --docker $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee snyk_sast.log;
-      fi
+  script: |
+    if [[ "$FEATURE_FLAG_snyk" == "true" ]]; then
+      snyk auth $SNYK_TOKEN
+      snyk test --docker $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee snyk_sast.log
+    fi
   artifacts:
     paths:
       - snyk_sast.log
   only:
     - main
   retry: 2  # Retry the job up to 2 times on failure
+  dependencies:
+    - fetch-flags
 
 sast:
   stage: sast
   image: snyk/snyk-cli:docker
-  script:
-    - if [[ "$FEATURE_FLAG_SAST" == "true" ]]; then
-        ./run_sast.sh | tee sast.log;
-      fi
+  script: |
+    if [[ "$FEATURE_FLAG_sast" == "true" ]]; then
+      ./run_sast.sh | tee sast.log
+    fi
   artifacts:
     paths:
       - sast.log
   only:
     - main
   retry: 2  # Retry the job up to 2 times on failure
+  dependencies:
+    - fetch-flags
 
 dependency-scanning:
   stage: dependency-scanning
   image: snyk/snyk-cli:docker
-  script:
-    - if [[ "$FEATURE_FLAG_DEPENDENCY_SCANNING" == "true" ]]; then
-        snyk auth $SNYK_TOKEN;
-        snyk test --file=package.json | tee dependency_scanning.log;
-      fi
+  script: |
+    if [[ "$FEATURE_FLAG_dependency_scanning" == "true" ]]; then
+      snyk auth $SNYK_TOKEN
+      snyk test --file=package.json | tee dependency_scanning.log
+    fi
   artifacts:
     paths:
       - dependency_scanning.log
   only:
     - main
   retry: 2  # Retry the job up to 2 times on failure
+  dependencies:
+    - fetch-flags
 
 container-scanning:
   stage: container-scanning
   image: snyk/snyk-cli:docker
-  script:
-    - if [[ "$FEATURE_FLAG_CONTAINER_SCANNING" == "true" ]]; then
-        snyk auth $SNYK_TOKEN;
-        snyk container test $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee container_scanning.log;
-      fi
+  script: |
+    if [[ "$FEATURE_FLAG_container_scanning" == "true" ]]; then
+      snyk auth $SNYK_TOKEN
+      snyk container test $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee container_scanning.log
+    fi
   artifacts:
     paths:
       - container_scanning.log
   only:
     - main
   retry: 2
+  dependencies:
+    - fetch-flags
 
 build:
   stage: build
@@ -147,7 +152,8 @@ build:
       - build.log
   only:
     - main
-  # needs: ["snyk", "sast", "dependency-scanning", "container-scanning"]
+  dependencies:
+    - fetch-flags
 
 deploy-dev:
   stage: deploy-dev
@@ -174,49 +180,56 @@ deploy-dev:
     - main
   when: manual
   allow_failure: false
-  # needs: ["snyk"]
+  dependencies:
+    - fetch-flags
 
 deploy-qa:
   stage: deploy-qa
   image: bitnami/kubectl:latest
   environment:
     name: qa
-  script:
-    - export KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME)
-    - echo "$KUBE_CONTEXT"
-    - kubectl config use-context $KUBE_CONTEXT || (echo "Failed to switch context" && exit 1)
-    - kubectl config set-context --current --namespace=qa
-    - kubectl apply -f k8s/deployment.yaml
-    - kubectl apply -f k8s/service.yaml
+  script: |
+    if [[ "$FEATURE_FLAG_deploy_qa" == "true" ]]; then
+      export KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME)
+      echo "$KUBE_CONTEXT"
+      kubectl config use-context $KUBE_CONTEXT || (echo "Failed to switch context" && exit 1)
+      kubectl config set-context --current --namespace=qa
+      kubectl apply -f k8s/deployment.yaml
+      kubectl apply -f k8s/service.yaml
+    fi
   only:
     - main
   when: manual
   allow_failure: false
-  # needs: ["snyk"]
+  dependencies:
+    - fetch-flags
 
 deploy-stage:
   stage: deploy-stage
   image: bitnami/kubectl:latest
   environment:
     name: stage
-  script:
-    - export KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME)
-    - echo "$KUBE_CONTEXT"
-    - kubectl config use-context $KUBE_CONTEXT || (echo "Failed to switch context" && exit 1)
-    - kubectl config set-context --current --namespace=stage
-    - kubectl apply -f k8s/deployment.yaml
-    - kubectl apply -f k8s/service.yaml
+  script: |
+    if [[ "$FEATURE_FLAG_deploy_stage" == "true" ]]; then
+      export KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME)
+      echo "$KUBE_CONTEXT"
+      kubectl config use-context $KUBE_CONTEXT || (echo "Failed to switch context" && exit 1)
+      kubectl config set-context --current --namespace=stage
+      kubectl apply -f k8s/deployment.yaml
+      kubectl apply -f k8s/service.yaml
+    fi
   only:
     - main
   when: manual
   allow_failure: false
-  # needs: ["snyk"]
+  dependencies:
+    - fetch-flags
 
 check-jira:
   stage: check-jira
   image: curlimages/curl:latest
   script: |
-    if [[ "$FEATURE_FLAG_CHECK_JIRA" == "true" ]]; then
+    if [[ "$FEATURE_FLAG_check_jira" == "true" ]]; then
       JIRA_ISSUE_STATUS=$(curl -s -H "Authorization: Bearer $JIRA_PAT" -X GET -H "Content-Type: application/json" "$JIRA_BASE_URL/rest/api/2/search?jql=project=$JIRA_PROJECT_KEY%20AND%20status%20in%20(Testing)")
       echo "$JIRA_ISSUE_STATUS"
       if [[ "$JIRA_ISSUE_STATUS" == *"Testing"* ]]; then
@@ -230,24 +243,26 @@ check-jira:
     - main
   when: manual
   allow_failure: false
-
+  dependencies:
+    - fetch-flags
 
 deploy-prod:
   stage: deploy-prod
   image: bitnami/kubectl:latest
   environment:
     name: production
-  script:
-    - export KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME)
-    - echo "$KUBE_CONTEXT"
-    - kubectl config use-context $KUBE_CONTEXT || (echo "Failed to switch context" && exit 1)
-    - kubectl config set-context --current --namespace=production
-    - kubectl apply -f k8s/deployment.yaml
-    - kubectl apply -f k8s/service.yaml
-  # dependencies:
-  #   - check-jira
+  script: |
+    if [[ "$FEATURE_FLAG_deploy_prod" == "true" ]]; then
+      export KUBE_CONTEXT=$(kubectl config get-contexts -o name | grep $EKS_CLUSTER_NAME)
+      echo "$KUBE_CONTEXT"
+      kubectl config use-context $KUBE_CONTEXT || (echo "Failed to switch context" && exit 1)
+      kubectl config set-context --current --namespace=production
+      kubectl apply -f k8s/deployment.yaml
+      kubectl apply -f k8s/service.yaml
+    fi
   only:
     - main
   when: manual
   allow_failure: false
-  # needs: ["snyk", "check-jira"]
+  dependencies:
+    - fetch-flags
