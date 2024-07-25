@@ -71,10 +71,7 @@ variables:
 
 iac-security:
   stage: iac-security
-  image: python:3.9
-  before_script:
-    - pip install --user checkov
-    - export PATH=$HOME/.local/bin:$PATH
+  image: bridgecrew/checkov:latest
   script:
     - checkov -d . | tee iac_security.log
   artifacts:
