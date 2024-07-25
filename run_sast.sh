@@ -11,7 +11,6 @@ snyk auth $SNYK_TOKEN
 echo "Running Snyk Code Test for SAST..."
 snyk code test --json > snyk_sast_report.json
 
-# Optionally, you can print the results
 echo "Snyk SAST results:"
 cat snyk_sast_report.json
 
