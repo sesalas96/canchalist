@@ -20,57 +20,70 @@ variables:
   JIRA_PROJECT_KEY: "DTPR"
   JIRA_PAT: "NjQ0NjU5NjYyMDAwOtp1ETuto83ov/idBIBUsgadPbkM"
   SNYK_TOKEN: "SNYK_TOKEN"
+  FEATURE_FLAG_SNYK: "false"
+  FEATURE_FLAG_SAST: "false"
+  FEATURE_FLAG_DEPENDENCY_SCANNING: "false"
+  FEATURE_FLAG_CONTAINER_SCANNING: "false"
+  FEATURE_FLAG_CHECK_JIRA: "false"
 
-# snyk:
-#   stage: snyk
-#   image: snyk/snyk-cli:docker
-#   script:
-#     - snyk auth $SNYK_TOKEN
-#     - snyk test --docker $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee snyk_sast.log
-#   artifacts:
-#     paths:
-#       - snyk_sast.log
-#   only:
-#     - main
-#   retry: 2  # Retry the job up to 2 times on failure
+snyk:
+  stage: snyk
+  image: snyk/snyk-cli:docker
+  script:
+    - if [[ "$FEATURE_FLAG_SNYK" == "true" ]]; then
+        snyk auth $SNYK_TOKEN;
+        snyk test --docker $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee snyk_sast.log;
+      fi
+  artifacts:
+    paths:
+      - snyk_sast.log
+  only:
+    - main
+  retry: 2  # Retry the job up to 2 times on failure
 
-# sast:
-#   stage: sast
-#   image: snyk/snyk-cli:docker
-#   script:
-#     - ./run_sast.sh | tee sast.log
-#   artifacts:
-#     paths:
-#       - sast.log
-#   only:
-#     - main
-#   retry: 2  # Retry the job up to 2 times on failure
+sast:
+  stage: sast
+  image: snyk/snyk-cli:docker
+  script:
+    - if [[ "$FEATURE_FLAG_SAST" == "true" ]]; then
+        ./run_sast.sh | tee sast.log;
+      fi
+  artifacts:
+    paths:
+      - sast.log
+  only:
+    - main
+  retry: 2  # Retry the job up to 2 times on failure
 
-# dependency-scanning:
-#   stage: dependency-scanning
-#   image: snyk/snyk-cli:docker
-#   script:
-#     - snyk auth $SNYK_TOKEN
-#     - snyk test --file=package.json | tee dependency_scanning.log
-#   artifacts:
-#     paths:
-#       - dependency_scanning.log
-#   only:
-#     - main
-#   retry: 2  # Retry the job up to 2 times on failure
+dependency-scanning:
+  stage: dependency-scanning
+  image: snyk/snyk-cli:docker
+  script:
+    - if [[ "$FEATURE_FLAG_DEPENDENCY_SCANNING" == "true" ]]; then
+        snyk auth $SNYK_TOKEN;
+        snyk test --file=package.json | tee dependency_scanning.log;
+      fi
+  artifacts:
+    paths:
+      - dependency_scanning.log
+  only:
+    - main
+  retry: 2  # Retry the job up to 2 times on failure
 
-# container-scanning:
-#   stage: container-scanning
-#   image: snyk/snyk-cli:docker
-#   script:
-#     - snyk auth $SNYK_TOKEN
-#     - snyk container test $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee container_scanning.log
-#   artifacts:
-#     paths:
-#       - container_scanning.log
-#   only:
-#     - main
-#   retry: 2
+container-scanning:
+  stage: container-scanning
+  image: snyk/snyk-cli:docker
+  script:
+    - if [[ "$FEATURE_FLAG_CONTAINER_SCANNING" == "true" ]]; then
+        snyk auth $SNYK_TOKEN;
+        snyk container test $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee container_scanning.log;
+      fi
+  artifacts:
+    paths:
+      - container_scanning.log
+  only:
+    - main
+  retry: 2
 
 build:
   stage: build
@@ -176,27 +189,25 @@ deploy-stage:
   allow_failure: false
   # needs: ["snyk"]
 
-# check-jira:
-#   stage: check-jira
-#   image: curlimages/curl:latest
-#   script:
-#     - >
-#       JIRA_ISSUE_STATUS=$(curl -s -H "Authorization: Bearer $JIRA_PAT" -X GET
-#       -H "Content-Type: application/json"
-#       "$JIRA_BASE_URL/rest/api/2/search?jql=project=$JIRA_PROJECT_KEY%20AND%20status%20in%20(Testing)")
-#     - echo "$JIRA_ISSUE_STATUS"
-#     - >
-#       if [[ "$JIRA_ISSUE_STATUS" == *"Testing"* ]]; then
-#         echo "Jira issues are ready for deployment."
-#       else
-#         echo "No Jira issues are ready for deployment." >&2
-#         exit 1
-#       fi
-#   only:
-#     - main
-#   when: manual
-#   allow_failure: false
-#   needs: ["snyk"]
+check-jira:
+  stage: check-jira
+  image: curlimages/curl:latest
+  script: |
+    if [[ "$FEATURE_FLAG_CHECK_JIRA" == "true" ]]; then
+      JIRA_ISSUE_STATUS=$(curl -s -H "Authorization: Bearer $JIRA_PAT" -X GET -H "Content-Type: application/json" "$JIRA_BASE_URL/rest/api/2/search?jql=project=$JIRA_PROJECT_KEY%20AND%20status%20in%20(Testing)")
+      echo "$JIRA_ISSUE_STATUS"
+      if [[ "$JIRA_ISSUE_STATUS" == *"Testing"* ]]; then
+        echo "Jira issues are ready for deployment."
+      else
+        echo "No Jira issues are ready for deployment." >&2
+        exit 1
+      fi
+    fi
+  only:
+    - main
+  when: manual
+  allow_failure: false
+
 
 deploy-prod:
   stage: deploy-prod
