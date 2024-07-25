@@ -1,8 +1,14 @@
 stages:
+  - snyk
+  - sast
+  - dependency-scanning
+  - container-scanning
+  - iac-security
   - build
   - deploy-dev
   - deploy-qa
   - deploy-stage
+  - check-jira
   - deploy-prod
 
 variables:
@@ -11,6 +17,72 @@ variables:
   DOCKER_IMAGE_REPO: 067322660699.dkr.ecr.us-east-1.amazonaws.com/cci-node-template
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
+  JIRA_BASE_URL: "https://jirasoft.consolidated.com/"
+  JIRA_PROJECT_KEY: "DTPR"
+  JIRA_PAT: "NjQ0NjU5NjYyMDAwOtp1ETuto83ov/idBIBUsgadPbkM"
+  SNYK_TOKEN: "SNYK_TOKEN"
+
+# snyk:
+#   stage: snyk
+#   image: snyk/snyk-cli:docker
+#   script:
+#     - snyk auth $SNYK_TOKEN
+#     - snyk test --docker $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee snyk_sast.log
+#   artifacts:
+#     paths:
+#       - snyk_sast.log
+#   only:
+#     - main
+
+# sast:
+#   stage: sast
+#   image: snyk/snyk-cli:docker
+#   script:
+#     - ./run_sast.sh | tee sast.log
+#   artifacts:
+#     paths:
+#       - sast.log
+#   only:
+#     - main
+
+# dependency-scanning:
+#   stage: dependency-scanning
+#   image: snyk/snyk-cli:docker
+#   script:
+#     - snyk auth $SNYK_TOKEN
+#     - snyk test --file=package.json | tee dependency_scanning.log
+#   artifacts:
+#     paths:
+#       - dependency_scanning.log
+#   only:
+#     - main
+
+# container-scanning:
+#   stage: container-scanning
+#   image: snyk/snyk-cli:docker
+#   script:
+#     - snyk auth $SNYK_TOKEN
+#     - snyk container test $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee container_scanning.log
+#   artifacts:
+#     paths:
+#       - container_scanning.log
+#   only:
+#     - main
+
+iac-security:
+  stage: iac-security
+  image: python:3.9-slim
+  before_script:
+    - apt-get update && apt-get install -y python3-pip
+    - pip3 install --user --upgrade pip
+    - pip3 install checkov
+  script:
+    - checkov -d . | tee iac_security.log
+  artifacts:
+    paths:
+      - iac_security.log
+  only:
+    - main
 
 build:
   stage: build
@@ -46,8 +118,12 @@ build:
     - docker build -t $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA .
     - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $DOCKER_IMAGE_REPO
     - docker push $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA
+  artifacts:
+    paths:
+      - build.log
   only:
     - main
+  needs: ["iac-security"] # Need SNYK Token before this works add "snyk", "sast", "dependency-scanning", "container-scanning" when available
 
 deploy-dev:
   stage: deploy-dev
@@ -74,6 +150,7 @@ deploy-dev:
     - main
   when: manual
   allow_failure: false
+  # needs: ["snyk"]
 
 deploy-qa:
   stage: deploy-qa
@@ -91,6 +168,7 @@ deploy-qa:
     - main
   when: manual
   allow_failure: false
+  # needs: ["snyk"]
 
 deploy-stage:
   stage: deploy-stage
@@ -108,6 +186,29 @@ deploy-stage:
     - main
   when: manual
   allow_failure: false
+  # needs: ["snyk"]
+
+# check-jira:
+#   stage: check-jira
+#   image: curlimages/curl:latest
+#   script:
+#     - >
+#       JIRA_ISSUE_STATUS=$(curl -s -H "Authorization: Bearer $JIRA_PAT" -X GET
+#       -H "Content-Type: application/json"
+#       "$JIRA_BASE_URL/rest/api/2/search?jql=project=$JIRA_PROJECT_KEY%20AND%20status%20in%20(Testing)")
+#     - echo "$JIRA_ISSUE_STATUS"
+#     - >
+#       if [[ "$JIRA_ISSUE_STATUS" == *"Testing"* ]]; then
+#         echo "Jira issues are ready for deployment."
+#       else
+#         echo "No Jira issues are ready for deployment." >&2
+#         exit 1
+#       fi
+#   only:
+#     - main
+#   when: manual
+#   allow_failure: false
+#   needs: ["snyk"]
 
 deploy-prod:
   stage: deploy-prod
@@ -121,7 +222,10 @@ deploy-prod:
     - kubectl config set-context --current --namespace=production
     - kubectl apply -f k8s/deployment.yaml
     - kubectl apply -f k8s/service.yaml
+  # dependencies:
+  #   - check-jira
   only:
     - main
   when: manual
   allow_failure: false
+  # needs: ["snyk", "check-jira"]
