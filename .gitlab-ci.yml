@@ -32,7 +32,7 @@ fetch-flags:
   stage: fetch-flags
   image: curlimages/curl:latest
   script: |
-    - if [[ "FEATURE_FLAG_FLAGD" == "true" ]]; then
+    if [[ "$FEATURE_FLAG_FLAGD" == "true" ]]; then
       # Fetch feature flags configuration
       curl -s -O https://raw.githubusercontent.com/your-repo/feature-flags.json
 
@@ -48,7 +48,7 @@ fetch-flags:
     fi
   artifacts:
     reports:
-      dotenv: .env
+      dotenv: flags.env
 snyk:
   stage: snyk
   image: snyk/snyk-cli:docker
