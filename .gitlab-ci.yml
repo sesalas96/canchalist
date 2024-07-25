@@ -1,6 +1,6 @@
 stages:
-  # - snyk
-  # - sast
+  - snyk
+  - sast
   - dependency-scanning
   - container-scanning
   - iac-security
@@ -8,7 +8,7 @@ stages:
   - deploy-dev
   - deploy-qa
   - deploy-stage
-  # - check-jira
+  - check-jira
   - deploy-prod
 
 variables:
@@ -24,10 +24,13 @@ variables:
 
 # snyk:
 #   stage: snyk
-#   image: snyk/snyk:docker
+#   image: snyk/snyk-cli:docker
 #   script:
 #     - snyk auth $SNYK_TOKEN
-#     - snyk test --docker $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA
+#     - snyk test --docker $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee snyk_sast.log
+#   artifacts:
+#     paths:
+#       - snyk_sast.log
 #   only:
 #     - main
 
@@ -35,31 +38,45 @@ variables:
 #   stage: sast
 #   image: snyk/snyk-cli:docker
 #   script:
-#     - ./run_sast.sh
+#     - ./run_sast.sh | tee sast.log
+#   artifacts:
+#     paths:
+#       - sast.log
 #   only:
 #     - main
 
-dependency-scanning:
-  stage: dependency-scanning
-  image: registry.gitlab.com/gitlab-org/security-products/dependency-scanning:latest
-  script:
-    - dependency_scanning
-  only:
-    - main
+# dependency-scanning:
+#   stage: dependency-scanning
+#   image: snyk/snyk-cli:docker
+#   script:
+#     - snyk auth $SNYK_TOKEN
+#     - snyk test --file=package.json | tee dependency_scanning.log
+#   artifacts:
+#     paths:
+#       - dependency_scanning.log
+#   only:
+#     - main
 
-container-scanning:
-  stage: container-scanning
-  image: registry.gitlab.com/gitlab-org/security-products/container-scanning:latest
-  script:
-    - container_scanning
-  only:
-    - main
+# container-scanning:
+#   stage: container-scanning
+#   image: snyk/snyk-cli:docker
+#   script:
+#     - snyk auth $SNYK_TOKEN
+#     - snyk container test $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA | tee container_scanning.log
+#   artifacts:
+#     paths:
+#       - container_scanning.log
+#   only:
+#     - main
 
 iac-security:
   stage: iac-security
   image: bridgecrew/checkov
   script:
-    - checkov -d .
+    - checkov -d . | tee iac_security.log
+  artifacts:
+    paths:
+      - iac_security.log
   only:
     - main
 
@@ -97,9 +114,12 @@ build:
     - docker build -t $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA .
     - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $DOCKER_IMAGE_REPO
     - docker push $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA
+  artifacts:
+    paths:
+      - build.log
   only:
     - main
-  needs: [ "dependency-scanning", "container-scanning", "iac-security"] # include "snyk", "sast" when synk is available
+  needs: ["iac-security"] # Need SNYK Token before this works add "snyk", "sast", "dependency-scanning", "container-scanning" when available
 
 deploy-dev:
   stage: deploy-dev
