@@ -4,17 +4,12 @@ metadata:
   name: cci-test-ingress
   namespace: dev
   annotations:
-    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     alb.ingress.kubernetes.io/target-type: instance
+    kubernetes.io/ingress.class: alb
 spec:
-  ingressClassName: alb
-  rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: cci-test-service
-                port:
-                  number: 80
+  defaultBackend:
+    service:
+      name: cci-test-service
+      port:
+        number: 80

@@ -18,4 +18,5 @@ describe('User Service', () => {
 
     await expect(fetchUsers()).rejects.toThrow('Network Error');
   });
+
 });

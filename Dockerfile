@@ -16,6 +16,9 @@ COPY . .
 # Build the application
 RUN npm run build
 
+# Test the application
+RUN npm run test
+
 # Stage 2: Run the application
 FROM node:20
 
