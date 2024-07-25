@@ -32,6 +32,7 @@ variables:
 #       - snyk_sast.log
 #   only:
 #     - main
+#   retry: 2  # Retry the job up to 2 times on failure
 
 # sast:
 #   stage: sast
@@ -43,6 +44,7 @@ variables:
 #       - sast.log
 #   only:
 #     - main
+#   retry: 2  # Retry the job up to 2 times on failure
 
 # dependency-scanning:
 #   stage: dependency-scanning
@@ -55,6 +57,7 @@ variables:
 #       - dependency_scanning.log
 #   only:
 #     - main
+#   retry: 2  # Retry the job up to 2 times on failure
 
 # container-scanning:
 #   stage: container-scanning
@@ -67,6 +70,7 @@ variables:
 #       - container_scanning.log
 #   only:
 #     - main
+#   retry: 2
 
 build:
   stage: build
