@@ -71,11 +71,10 @@ variables:
 
 iac-security:
   stage: iac-security
-  image: python:3.9-alpine
+  image: python:3.9-slim
   before_script:
-    - apk update && apk add --no-cache bash
-    - apk add --no-cache py3-pip
-    - pip install --user checkov
+    - apt-get update && apt-get install -y python3-pip
+    - pip3 install --user checkov
     - export PATH=$HOME/.local/bin:$PATH
   script:
     - checkov -d . | tee iac_security.log
@@ -84,7 +83,6 @@ iac-security:
       - iac_security.log
   only:
     - main
-
 
 build:
   stage: build
