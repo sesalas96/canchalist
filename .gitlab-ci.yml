@@ -1,4 +1,9 @@
 stages:
+  # - snyk
+  # - sast
+  - dependency-scanning
+  - container-scanning
+  - iac-security
   - build
   - deploy-dev
   - deploy-qa
@@ -15,6 +20,48 @@ variables:
   JIRA_BASE_URL: "https://jirasoft.consolidated.com/"
   JIRA_PROJECT_KEY: "DTPR"
   JIRA_PAT: "NjQ0NjU5NjYyMDAwOtp1ETuto83ov/idBIBUsgadPbkM"
+  SNYK_TOKEN: "SNYK_TOKEN"
+
+# snyk:
+#   stage: snyk
+#   image: snyk/snyk:docker
+#   script:
+#     - snyk auth $SNYK_TOKEN
+#     - snyk test --docker $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA
+#   only:
+#     - main
+
+# sast:
+#   stage: sast
+#   image: snyk/snyk-cli:docker
+#   script:
+#     - ./run_sast.sh
+#   only:
+#     - main
+
+dependency-scanning:
+  stage: dependency-scanning
+  image: registry.gitlab.com/gitlab-org/security-products/dependency-scanning:latest
+  script:
+    - dependency_scanning
+  only:
+    - main
+
+container-scanning:
+  stage: container-scanning
+  image: registry.gitlab.com/gitlab-org/security-products/container-scanning:latest
+  script:
+    - container_scanning
+  only:
+    - main
+
+iac-security:
+  stage: iac-security
+  image: bridgecrew/checkov
+  script:
+    - checkov -d .
+  only:
+    - main
 
 build:
   stage: build
@@ -52,6 +99,7 @@ build:
     - docker push $DOCKER_IMAGE_REPO:$CI_COMMIT_SHORT_SHA
   only:
     - main
+  needs: [ "dependency-scanning", "container-scanning", "iac-security"] # include "snyk", "sast" when synk is available
 
 deploy-dev:
   stage: deploy-dev
@@ -78,6 +126,7 @@ deploy-dev:
     - main
   when: manual
   allow_failure: false
+  # needs: ["snyk"]
 
 deploy-qa:
   stage: deploy-qa
@@ -95,6 +144,7 @@ deploy-qa:
     - main
   when: manual
   allow_failure: false
+  # needs: ["snyk"]
 
 deploy-stage:
   stage: deploy-stage
@@ -112,6 +162,7 @@ deploy-stage:
     - main
   when: manual
   allow_failure: false
+  # needs: ["snyk"]
 
 # check-jira:
 #   stage: check-jira
@@ -133,6 +184,7 @@ deploy-stage:
 #     - main
 #   when: manual
 #   allow_failure: false
+#   needs: ["snyk"]
 
 deploy-prod:
   stage: deploy-prod
@@ -152,3 +204,4 @@ deploy-prod:
     - main
   when: manual
   allow_failure: false
+  # needs: ["snyk", "check-jira"]
