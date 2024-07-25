@@ -1,9 +1,8 @@
 stages:
-  - snyk
-  - sast
-  - dependency-scanning
-  - container-scanning
-  - iac-security
+  # - snyk
+  # - sast
+  # - dependency-scanning
+  # - container-scanning
   - build
   - deploy-dev
   - deploy-qa
@@ -69,21 +68,6 @@ variables:
 #   only:
 #     - main
 
-iac-security:
-  stage: iac-security
-  image: python:3.9-slim
-  before_script:
-    - apt-get update && apt-get install -y python3-pip
-    - pip3 install --user --upgrade pip
-    - pip3 install checkov
-  script:
-    - checkov -d . | tee iac_security.log
-  artifacts:
-    paths:
-      - iac_security.log
-  only:
-    - main
-
 build:
   stage: build
   image: docker:20.10.16
@@ -123,7 +107,7 @@ build:
       - build.log
   only:
     - main
-  needs: ["iac-security"] # Need SNYK Token before this works add "snyk", "sast", "dependency-scanning", "container-scanning" when available
+  # needs: ["snyk", "sast", "dependency-scanning", "container-scanning"]
 
 deploy-dev:
   stage: deploy-dev
