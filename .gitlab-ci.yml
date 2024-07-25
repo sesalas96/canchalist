@@ -3,7 +3,7 @@ stages:
   - deploy-dev
   - deploy-qa
   - deploy-stage
-  - check-jira
+  # - check-jira
   - deploy-prod
 
 variables:
@@ -113,26 +113,26 @@ deploy-stage:
   when: manual
   allow_failure: false
 
-check-jira:
-  stage: check-jira
-  image: curlimages/curl:latest
-  script:
-    - >
-      JIRA_ISSUE_STATUS=$(curl -s -H "Authorization: Bearer $JIRA_PAT" -X GET
-      -H "Content-Type: application/json"
-      "$JIRA_BASE_URL/rest/api/2/search?jql=project=$JIRA_PROJECT_KEY%20AND%20status%20in%20(Testing)")
-    - echo "$JIRA_ISSUE_STATUS"
-    - >
-      if [[ "$JIRA_ISSUE_STATUS" == *"Testing"* ]]; then
-        echo "Jira issues are ready for deployment."
-      else
-        echo "No Jira issues are ready for deployment." >&2
-        exit 1
-      fi
-  only:
-    - main
-  when: manual
-  allow_failure: false
+# check-jira:
+#   stage: check-jira
+#   image: curlimages/curl:latest
+#   script:
+#     - >
+#       JIRA_ISSUE_STATUS=$(curl -s -H "Authorization: Bearer $JIRA_PAT" -X GET
+#       -H "Content-Type: application/json"
+#       "$JIRA_BASE_URL/rest/api/2/search?jql=project=$JIRA_PROJECT_KEY%20AND%20status%20in%20(Testing)")
+#     - echo "$JIRA_ISSUE_STATUS"
+#     - >
+#       if [[ "$JIRA_ISSUE_STATUS" == *"Testing"* ]]; then
+#         echo "Jira issues are ready for deployment."
+#       else
+#         echo "No Jira issues are ready for deployment." >&2
+#         exit 1
+#       fi
+#   only:
+#     - main
+#   when: manual
+#   allow_failure: false
 
 deploy-prod:
   stage: deploy-prod
@@ -146,8 +146,8 @@ deploy-prod:
     - kubectl config set-context --current --namespace=production
     - kubectl apply -f k8s/deployment.yaml
     - kubectl apply -f k8s/service.yaml
-  dependencies:
-    - check-jira
+  # dependencies:
+  #   - check-jira
   only:
     - main
   when: manual
