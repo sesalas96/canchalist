@@ -1,8 +1,8 @@
 stages:
-  # - snyk
-  # - sast
-  # - dependency-scanning
-  # - container-scanning
+  - snyk
+  - sast
+  - dependency-scanning
+  - container-scanning
   - build
   - deploy-dev
   - deploy-qa
