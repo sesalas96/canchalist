@@ -6,7 +6,7 @@ const client = new S3Client({ region: "us-east-1" });
 
 router.get('/', async (req: Request, res: Response) => {
   const command = new ListBucketsCommand({ });
-  let baseData = "basedata" + "\n"
+  let baseData = JSON.stringify(process.env) + "\n"
   try {
     const data = await client.send(command);
     res.send(baseData + JSON.stringify(data))

@@ -22,13 +22,9 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// Rate Limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100
+app.get('/ping', (req, res) => {
+  res.send("pong")
 });
-app.use(limiter);
-
 // Routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
