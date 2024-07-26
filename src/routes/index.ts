@@ -1,9 +1,23 @@
 import { Router, Request, Response } from 'express';
+import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 
 const router = Router();
+const client = new S3Client({ region: "us-east-1" });
 
-router.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
+router.get('/', async (req: Request, res: Response) => {
+  const command = new ListBucketsCommand({ });
+  let baseData = JSON.stringify(process.env) + "\n"
+  try {
+    const data = await client.send(command);
+    res.send(baseData + JSON.stringify(data))
+    // process data.
+  } catch (error) {
+    res.send(baseData + JSON.stringify(error))
+    // error handling.
+  } finally {
+    // finally.
+  }
+
 });
 
 export default router;
