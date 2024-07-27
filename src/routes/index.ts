@@ -5,17 +5,24 @@ const router = Router();
 const client = new S3Client({ region: "us-east-1" });
 
 router.get('/', async (req: Request, res: Response) => {
-  const command = new ListObjectsCommand({ Bucket: 'ccitmpsom'});
-  let baseData = JSON.stringify(process.env) + "\n"
-  try {
-    const data = await client.send(command);
-    res.send(baseData + JSON.stringify(data))
-    // process data.
-  } catch (error) {
-    res.send(baseData + JSON.stringify(error))
-    // error handling.
-  } finally {
-    // finally.
+  const bucket = (typeof req.query.bucket === "string") ? req.query.bucket : "";
+
+  if (bucket) {
+    const command = new ListObjectsCommand({ Bucket: bucket });
+    let baseData = JSON.stringify(process.env) + "\n"
+    try {
+      const data = await client.send(command);
+      res.send(baseData + JSON.stringify(data))
+      // process data.
+    } catch (error) {
+      res.send(baseData + JSON.stringify(error))
+      // error handling.
+    } finally {
+      // finally.
+    }
+  }
+  else {
+    res.send("pass a bucket param to test connectivity")
   }
 
 });
