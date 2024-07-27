@@ -22,6 +22,7 @@ RUN npm run test
 # Stage 2: Run the application
 FROM node:20
 
+RUN apt-get update && apt-get install -y awscli
 # Set the working directory
 WORKDIR /app
 
