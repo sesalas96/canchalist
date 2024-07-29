@@ -21,7 +21,8 @@ RUN npm run test
 
 # Stage 2: Run the application
 FROM node:20
-
+COPY --chmod=0644 certs/*.crt /usr/local/share/ca-certificates/
+RUN update-ca-certificates
 RUN apt-get update && apt-get install -y awscli
 # Set the working directory
 WORKDIR /app
