@@ -36,7 +36,7 @@ router.get('/dbTest', async (req: Request, res: Response) => {
     }
   })
   await pgClient.connect()
-  let dbres = await pgClient.query("SELECT NOW()")
+  let dbres = await pgClient.query("SELECT * from testtable")
   console.log(dbres)
   res.send(JSON.stringify(dbres))
 
