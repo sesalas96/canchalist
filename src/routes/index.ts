@@ -1,10 +1,53 @@
 import { Router, Request, Response } from 'express';
 import { S3Client, ListBucketsCommand, ListObjectsCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import {Client} from "pg";
+import { Signer } from '@aws-sdk/rds-signer'
+
+
 
 const router = Router();
 const client = new S3Client({ region: "us-east-1" });
 
 router.get('/', async (req: Request, res: Response) => {
+  res.send("Hello world!")
+
+
+});
+
+router.get('/dbTest', async (req: Request, res: Response) => {
+  let signer = new Signer({
+    region: 'us-east-1',
+    hostname: 'cci-web-dev.cdytq7ggxjhh.us-east-1.rds.amazonaws.com',
+    port: 5432,
+    username: 'ordernegotiation'
+  });
+
+
+  const token = await signer.getAuthToken();
+  console.log("t", token)
+  const pgClient = new Client({
+    user: 'ordernegotiation',
+    password: token,
+    host: 'cci-web-dev.cdytq7ggxjhh.us-east-1.rds.amazonaws.com',
+    port: 5432,
+    database: 'ordernegotiation',
+    ssl: {
+      rejectUnauthorized: false
+    }
+  })
+  await pgClient.connect()
+  let dbres = await pgClient.query("SELECT NOW()")
+  console.log(dbres)
+  res.send(JSON.stringify(dbres))
+
+});
+
+router.get('/kafkaTest', async (req: Request, res: Response) => {
+  res.send("Not implemented")
+
+});
+
+router.get('/s3test', async (req: Request, res: Response) => {
   const bucket = (typeof req.query.bucket === "string") ? req.query.bucket : "";
 
   if (bucket) {
