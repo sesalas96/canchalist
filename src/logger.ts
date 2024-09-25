@@ -13,9 +13,11 @@ const logger: winston.Logger = winston.createLogger({
 
 // Add console transport if not in production environment
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple(),
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    }),
+  );
 }
 
 // Export the logger

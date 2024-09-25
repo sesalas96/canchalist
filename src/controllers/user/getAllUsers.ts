@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { validationResult } from 'express-validator';
-import { fetchUsers } from '../services/userService';
+import { UsersService } from '@src/services';
 
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users = await fetchUsers();
+    const users = await UsersService.fetchUsers();
     const transformedUsers = users.map((user: any) => ({
       id: user.id,
       name: user.name.toUpperCase(),
@@ -19,12 +18,4 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const createUser = (req: Request, res: Response, next: NextFunction) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  res.send('Create a new user');
-};
-
-export default { getAllUsers, createUser };
+export default getAllUsers;

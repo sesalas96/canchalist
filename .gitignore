@@ -45,3 +45,6 @@ Thumbs.db
 # Lint and prettier logs
 eslintcache
 .prettiercache
+
+.npmrc
+*-lock.json

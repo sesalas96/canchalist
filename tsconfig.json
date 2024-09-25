@@ -1,5 +1,10 @@
 {
     "compilerOptions": {
+      "baseUrl": "./",
+      "paths": {
+        "@src/*": ["src/*"],
+        "@config": ["src/config.ts"],
+      },
       "target": "ES6",
       "module": "commonjs",
       "strict": true,

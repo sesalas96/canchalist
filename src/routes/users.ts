@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import userController from '../controllers/userController';
+import { ROUTES } from '@src/constants';
+import UserControllers from '@src/controllers/user';
 import { body } from 'express-validator';
 
 const router = Router();
@@ -60,7 +61,7 @@ const router = Router();
  *               items:
  *                 $ref: '#/components/schemas/User'
  */
-router.get('/', userController.getAllUsers);
+router.get(ROUTES.USERS.BASE, UserControllers.getAllUsers);
 
 /**
  * @swagger
@@ -85,12 +86,12 @@ router.get('/', userController.getAllUsers);
  *         description: Some server error
  */
 router.post(
-  '/',
+  ROUTES.USERS.BASE,
   [
     body('name').notEmpty().withMessage('Name is required'),
-    body('email').isEmail().withMessage('Email is invalid')
+    body('email').isEmail().withMessage('Email is invalid'),
   ],
-  userController.createUser
+  UserControllers.createUser,
 );
 
 export default router;
