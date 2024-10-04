@@ -86,12 +86,12 @@ router.get(ROUTES.USERS.BASE, UserControllers.getAllUsers);
  *         description: Some server error
  */
 router.post(
-  ROUTES.USERS.BASE,
-  [
-    body('name').notEmpty().withMessage('Name is required'),
-    body('email').isEmail().withMessage('Email is invalid'),
-  ],
-  UserControllers.createUser,
+    ROUTES.USERS.BASE,
+    [
+        body('name').notEmpty().withMessage('Name is required'),
+        body('email').isEmail().withMessage('Email is invalid'),
+    ],
+    UserControllers.createUser,
 );
 
 export default router;

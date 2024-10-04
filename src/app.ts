@@ -9,15 +9,16 @@ import swaggerUi from 'swagger-ui-express';
 import { specs } from './swagger';
 import logger from '@src/logger';
 import apiRouter from './routes';
+import config from '@config';
 
 const app = express();
-const port = Number(process.env.PORT) || 3000;
+const port = config.port;
 
 // Middleware
 app.use(
-  morgan('combined', {
-    stream: { write: (message) => logger.info(message.trim()) },
-  }),
+    morgan('combined', {
+        stream: { write: (message) => logger.info(message.trim()) },
+    }),
 );
 app.use(helmet());
 app.use(cors());
@@ -32,5 +33,5 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`App listening on port: ${port}`);
+    console.log(`App listening on port: ${port}`);
 });
