@@ -10,11 +10,17 @@ import { specs } from './swagger';
 import logger from '@src/logger';
 import apiRouter from './routes';
 import config from '@config';
+import { ROUTES } from './constants';
+import httpContext from 'express-http-context';
+import { transactionIdSetter } from '@mule-migration/mulesoft-migration-core';
 
 const app = express();
 const port = config.port;
 
 // Middleware
+app.use(httpContext.middleware);
+app.use(transactionIdSetter);
+
 app.use(
     morgan('combined', {
         stream: { write: (message) => logger.info(message.trim()) },
@@ -23,6 +29,8 @@ app.use(
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+
+app.use(ROUTES.BASE_PATH_V1, apiRouter);
 
 app.use('/', apiRouter);
 

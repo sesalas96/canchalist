@@ -1,16 +1,18 @@
 {
-    "compilerOptions": {
-      "baseUrl": "./",
-      "paths": {
-        "@src/*": ["src/*"],
-        "@config": ["src/config.ts"],
-      },
-      "target": "ES6",
-      "module": "commonjs",
-      "strict": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "outDir": "./dist"
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@config": ["src/config.ts"],
     },
-    "include": ["src/**/*"]
-  }  
+    "target": "ES6",
+    "module": "NodeNext",
+    "moduleDetection": "auto",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"]
+}  
