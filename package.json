@@ -9,7 +9,8 @@
     "start": "node dist/app.js",
     "develop": "nodemon",
     "dev": "ts-node -r tsconfig-paths/register src/app.ts",
-    "test": "jest"
+    "test": "jest",
+    "new-core": "rm package-lock.json && rm -rf node_modules && npm update && npm run develop"
   },
   "dependencies": {
     "@aws-sdk/client-rds": "^3.624.0",
@@ -17,7 +18,7 @@
     "@aws-sdk/credential-providers": "^3.624.0",
     "@aws-sdk/rds-signer": "^3.624.0",
     "@jm18457/kafkajs-msk-iam-authentication-mechanism": "^3.1.2",
-    "@mule-migration/mulesoft-migration-core": "^0.0.1",
+    "@mule-migration/core": "^0.0.2",
     "axios": "^1.7.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

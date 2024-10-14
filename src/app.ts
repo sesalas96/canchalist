@@ -12,7 +12,7 @@ import apiRouter from './routes';
 import config from '@config';
 import { ROUTES } from './constants';
 import httpContext from 'express-http-context';
-import { transactionIdSetter } from '@mule-migration/mulesoft-migration-core';
+import { transactionIdSetter } from '@mule-migration/core';
 
 const app = express();
 const port = config.port;
