@@ -10,29 +10,27 @@
     "develop": "nodemon",
     "dev": "ts-node -r tsconfig-paths/register src/app.ts",
     "test": "jest",
-    "new-core": "rm package-lock.json && rm -rf node_modules && npm update && npm run develop"
+    "new-core": "rm package-lock.json && rm -rf node_modules && npm update && npm run develop",
+    "bundle-specs": "swagger-cli bundle src/docs/api.yaml -o src/docs/bundled-api.yaml --type yaml",
+    "validate-specs": "npm run bundle-specs && swagger-cli validate src/docs/bundled-api.yaml",
+    "validate-prettier": "prettier --check \"src/**/*.{ts,js,json,md}\"",
+    "pre-commit": "npm run validate-prettier && jest --bail && npm run validate-specs"
   },
   "dependencies": {
-    "@aws-sdk/client-rds": "^3.624.0",
-    "@aws-sdk/client-s3": "^3.620.0",
-    "@aws-sdk/credential-providers": "^3.624.0",
-    "@aws-sdk/rds-signer": "^3.624.0",
-    "@jm18457/kafkajs-msk-iam-authentication-mechanism": "^3.1.2",
-    "@mule-migration/core": "^0.0.2",
+    "@mule-migration/core": "^0.0.3",
     "axios": "^1.7.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.17.1",
     "express-http-context": "^1.2.4",
+    "express-openapi-validator": "^5.3.7",
     "express-rate-limit": "^7.3.1",
     "express-validator": "^7.1.0",
     "fast-xml-parser": "^4.4.0",
     "helmet": "^7.1.0",
     "js-yaml": "^4.1.0",
-    "kafkajs": "^2.2.4",
     "module-alias": "^2.2.2",
     "morgan": "^1.10.0",
-    "pg": "^8.12.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.3.3"
@@ -61,9 +59,9 @@
     "supertest": "^7.0.0",
     "ts-jest": "^29.1.4",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.6.3",
-    "tsc-alias": "^1.8.10"
+    "typescript": "^5.6.3"
   },
   "lint-staged": {
     "*.ts": [

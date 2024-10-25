@@ -3,21 +3,20 @@ import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
-import rateLimit from 'express-rate-limit';
 import errorHandler from './middlewares/errorHandler';
 import swaggerUi from 'swagger-ui-express';
-import { specs } from './swagger';
-import logger from '@src/logger';
 import apiRouter from './routes';
-import config from '@config';
+import config from '@src/config';
 import { ROUTES } from './constants';
 import httpContext from 'express-http-context';
-import { transactionIdSetter } from '@mule-migration/core';
+import { transactionIdSetter, logger } from '@mule-migration/core';
+import { middleware } from 'express-openapi-validator';
+import { specsObject, specsPath } from '@src/docs';
 
 const app = express();
 const port = config.port;
 
-// Middleware
+// Middlewares
 app.use(httpContext.middleware);
 app.use(transactionIdSetter);
 
@@ -30,14 +29,23 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-app.use(ROUTES.BASE_PATH_V1, apiRouter);
+// Validations
+app.use(
+    middleware({
+        apiSpec: specsPath,
+        validateRequests: true, // (default)
+        validateResponses: false, // Change to true if you want to validate responses,
+        validateApiSpec: true,
+    }),
+);
 
-app.use('/', apiRouter);
+// Routers
+app.use(ROUTES.BASE, apiRouter);
 
-// Swagger API documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+// Documentation
+app.use(ROUTES.API_DOCS, swaggerUi.serve, swaggerUi.setup(specsObject));
 
-// Error handling middleware
+// Error Handling
 app.use(errorHandler);
 
 app.listen(port, () => {

@@ -3,7 +3,7 @@
     "baseUrl": "./",
     "paths": {
       "@src/*": ["src/*"],
-      "@config": ["src/config.ts"],
+      "@config": ["src/config/index.ts"],
     },
     "target": "ES6",
     "module": "NodeNext",

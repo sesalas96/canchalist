@@ -1,10 +1,11 @@
-import config from '@config';
+import config from '@src/config';
 
 export const ROUTES = {
-    BASE_PATH_V1: '/api/v1',
+    BASE: `${config.repository}-${config.env}/api/v1`,
+    API_DOCS: '/api-docs',
     SECTION: {
         BASE: '/section',
-        ENDPOINT_FUNCTION: '/endpoint',
+        ENDPOINT_FUNCTION: '/section/endpoint',
     },
     USERS: {
         BASE: '/users',

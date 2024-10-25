@@ -1,17 +1,12 @@
 import request from 'supertest';
-import express from 'express';
-import usersRouter from '@src/routes/users';
 import { UsersService } from '@src/services';
 import MockedData from '@src/__mocks__/services/users';
+import { testApp as app } from '@src/tests';
 
 jest.mock('@src/services');
 const mockedService = UsersService.fetchUsers as jest.MockedFunction<
     typeof UsersService.fetchUsers
 >;
-
-const app = express();
-app.use(express.json());
-app.use(usersRouter);
 
 describe('Get Users Controller', () => {
     beforeEach(() => {
