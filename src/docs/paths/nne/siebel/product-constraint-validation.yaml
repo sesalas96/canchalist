@@ -1,0 +1,49 @@
+post:
+    tags:
+        - nne/siebel
+    description: >
+        API for NNE to perform product constraints - default attribute setting and default products. 
+        This API will do nothing for Prism.
+    summary: Product Constraints
+    requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object
+                    properties:
+                        orderNumber:
+                            type: string
+                            description: 'Order number for which product constraints need to be validated.'
+                            example: '1-16353170934'
+    responses:
+        200:
+            description: Successful response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            environment:
+                                type: string
+                                description: 'Environment where the validation is executed.'
+                                example: 'SITNNE'
+                            errorMessage:
+                                type: string
+                                description: 'Error message if any issue occurred, otherwise null.'
+                                nullable: true
+                                example: null
+                            status:
+                                type: string
+                                description: 'Status of the validation.'
+                                example: 'SUCCESS'
+                            errorCode:
+                                type: string
+                                description: 'Error code if an issue occurred, otherwise null.'
+                                nullable: true
+                                example: null
+                    example:
+                        environment: 'SITNNE'
+                        errorMessage: null
+                        status: 'SUCCESS'
+                        errorCode: null

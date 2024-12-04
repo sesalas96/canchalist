@@ -1,0 +1,60 @@
+post:
+    tags:
+        - nne/siebel
+    summary: Update Order Details
+    description: Update specific details of an order, such as contact number and notification preferences.
+    requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object
+                    properties:
+                        orderNumber:
+                            type: string
+                            example: '1-12345678901'
+                        canBeReachedNumber:
+                            type: string
+                            example: '6035551234'
+                        notificationOptIn:
+                            type: string
+                            enum: ['Y', 'N']
+                            example: 'Y'
+                    required:
+                        - orderNumber
+                        - canBeReachedNumber
+                        - notificationOptIn
+                example:
+                    orderNumber: '1-12345678901'
+                    canBeReachedNumber: '6035551234'
+                    notificationOptIn: 'Y'
+    responses:
+        200:
+            description: Successful response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            environment:
+                                type: string
+                                example: 'SITNNE'
+                            errorMessage:
+                                type: string
+                                nullable: true
+                                example: null
+                            status:
+                                type: string
+                                example: 'SUCCESS'
+                            errorCode:
+                                type: string
+                                nullable: true
+                                example: null
+                        required:
+                            - environment
+                            - status
+                    example:
+                        environment: 'SITNNE'
+                        errorMessage: null
+                        status: 'SUCCESS'
+                        errorCode: null

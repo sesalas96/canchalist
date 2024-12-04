@@ -1,0 +1,330 @@
+get:
+    tags:
+        - tl/bill
+    summary: Service and Equipment
+    description: >
+        Retrieve service and equipment items for a customer or order.
+    parameters:
+        - name: orderNumber
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+          description: Prism order number.
+        - name: memberNumber
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+          description: PRISM MemberNumber (EXC || LIN || RES) or SIEBEL Phone Number || BAN.
+        - name: itemHistoryFlag
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: fullGroup
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: histMonths
+          in: query
+          required: false
+          schema:
+              type: integer
+              nullable: true
+        - name: requestedFieldsC01
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: billLevel
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: returnBWSummary
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: returnBWDetail
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+    responses:
+        200:
+            description: Successful response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            settings:
+                                type: object
+                                $ref: '../../../components/schemas/settings.yaml#/schemas/Settings'
+                                nullable: true
+                                example:
+                                    sourceEnvironment: 'SITNNE'
+                                    clientApplication: 'COMMON_UI'
+                                    currentUser: 'KXCROWL'
+                                    transactionId: '3c77d010-8fbc-47bb-b7ed-512fff3d9209'
+                                    clientFunction: ''
+                                    activeBillId: ''
+                                    activeMemberId: ''
+                                    activeMemberNum: ''
+                                    sourceStack: 'NNE'
+                            messages:
+                                type: object
+                                $ref: '../../../components/schemas/common.yaml#/schemas/messageResultSet'
+                                example:
+                                    group: ''
+                                    sentToExtInterface: ''
+                                    callingProgram: ''
+                                    sqlStateCode: ''
+                                    dataSequence: 0
+                                    sqlStateText: ''
+                                    callingProcedure: ''
+                                    msgText: ''
+                                    msgSeverity: 50
+                                    sqlStateMsgId: ''
+                                    msgFile: ''
+                                    sentToMsgQueue: ''
+                                    guid: ''
+                                    dataAlias: ''
+                                    dataField: ''
+                                    msgId: ''
+                                    dataValue: ''
+                                    msgData: ''
+                                    dataFile: ''
+                            # resultSet2:
+                            #     type: array
+                            #     items:
+                            #         type: object
+                            #         properties:
+                            #             billingPhoneExc: number
+                            #             billingPhoneLin: number
+                            #             billingPhoneRes: number
+                            #             memberPhoneExc: number
+                            #             memberPhoneLin: number
+                            #             memberPhoneRes: number
+                            #             billingNumber: string
+                            #             memberNumber: string
+                            #             itemCode: string
+                            #             itemSequence: number
+                            #             overrideRate: number
+                            #             inDate: number
+                            #             inServiceOrder: string
+                            #             outDate: number
+                            #             outServiceOrder: string
+                            #             dateOrginallyInstalled: number
+                            #             originalServiceOrder: string
+                            #             detailChargeCode: number
+                            #             detailItemType: string
+                            #             itemOrderActivityFlag: number
+                            #             activityFlag: string
+                            #             overridePrefix: string
+                            #             occAmount: number
+                            #             itemUnixId: number
+                            #             itemCommissionId: number
+                            #             userProfileId: string
+                            #             package: string
+                            #             packageSequence: number
+                            #             overrideQuantity: number
+                            #             itemConnectionNumber: number
+                            #             market: string
+                            #             tariff: string
+                            #             serviceType: string
+                            #             masterItemCode: string
+                            #             itemInvalidRecord: string
+                            #             itemDesc: string
+                            #             glRevenueAccount: number
+                            #             revenueChargeCode: number
+                            #             itemRate: number
+                            #             effectiveDate: number
+                            #             itemOldRate: number
+                            #             gainLossClass: string
+                            #             gainLossCategory: string
+                            #             prorateFlag: string
+                            #             itemType: string
+                            #             vertexCategoryCode: string
+                            #             vertexServiceCode: string
+                            #             itemRateOverride: string
+                            #             itemClassFeatureUsage: string
+                            #             itemPaperInvoice: string
+                            #             classFeatureRate: number
+                            #             classFeatureMaxAmount: number
+                            #             classFeatureEffDate: number
+                            #             classFeaturePrevRate: number
+                            #             itemBandwidthConsumed: number
+                            #             itemService: string
+                            #             itemWeight: number
+                            #             brasSpeedProfile: string
+                            #             dslamTrafficDescriptor: string
+                            #             itemCategoryMaster: string
+                            #             itemSubCategory1: string
+                            #             itemSubCategory2: string
+                            #             itemSubCategory3: string
+                            #             itemSubCategory4: string
+                            #             itemNonSe: string
+                            #             itemOutageCreditable: string
+                            #             itemCircuitLocation: string
+                            #             itemOcp: string
+                            #             itemRatingOcp: string
+                            #             itemLocallyOwned: string
+                            #             itemNormalCustspec: string
+                            #             unlimitedCallPlanFl: string
+                            #             itemElc: string
+                            #             itemBroadbandDesignator: string
+                            #             itemWireMaintenance: string
+                            #             itemTollRestriction: string
+                            #             itemLnp: string
+                            #             itemDirectoryAdvert: string
+                            #             itemCustPremiseEquip: string
+                            #             itemVoiceMail: string
+                            #             itemDialupInternet: string
+                            #             itemTxUsf: string
+                            #             itemLifeLine: string
+                            #             itemLifeLineCredit: string
+                            #             itemOffPremiseExt: string
+                            #             itemPerLineBlocking: string
+                            #             itemCnamBlocking: string
+                            #             itemUnlimitedLd: string
+                            #             itemUnlimitedLdCred: string
+                            #             itemCallerIdDeluxe: string
+                            #             itemPrivacyPlus: string
+                            #             itemHomeManager: string
+                            #             itemCallForwarding: string
+                            #             itemCallForwardingRem: string
+                            #             itemCustSuppliedPayph: string
+                            #             itemPrimarySoCharge: string
+                            #             itemSendToFms: string
+                            #             itemPrepaidPlts: string
+                            #             itemFutureUse: string
+                            #             itemEfl: string
+                            #             itemTollFl: string
+                            #             itemSubsLineCharge: string
+                            #             itemBaseRate: string
+                            #             specCpEditResFl: string
+                            #             specCpEditBusFl: string
+                            #             itemDslValuePackage: string
+                            #             itemDvsValuePackage: string
+                            #             itemEmployeeCallMgmt: string
+                            #             itemEmployeeDiscount: string
+                            #             itemDpa: string
+                            #             itemColAgencyTollRest: string
+                            #             itemMetroe: string
+                            #             itemExtReachDsl: string
+                            #             itemStaticIpAddress: string
+                            #             itemForeignIsp: string
+                            #             itemInternetSpeed: string
+                            #             itemRequiresPort: string
+                            #             itemProductClassification: string
+                            #             itemMedicalPriority: string
+                            #             itemTripCharge: string
+                            #             itemUnitOfService: string
+                            #             itemVacation: string
+                            #             itemLdAdminFee: string
+                            #             itemLdAdminFeeExempt: string
+                            #             item800AdminFee: string
+                            #             item800AdminFeeExempt: string
+                            #             itemRemoveWithNdDisco: string
+                            #             itemThirdPartyNotify: string
+                            #             itemCallingFeature: string
+                            #             itemVideoStream: string
+                            #             itemStandardDefinition: string
+                            #             itemHighDefinition: string
+                            #             itemDvr: string
+                            #             itemOtherIspSpeed: string
+                            #             itemEquipmentProtection: string
+                            #             itemSupportPlus: string
+                            #             guid: string
+                            #             changeUser: string
+                            #             changeDate: number
+                            #             changeTime: number
+                            #             businessResidentialInd: string
+                            #             residentialServiceType: string
+                            #             businessServiceType: string
+                            #             itemUrbanRuralDesignator: string
+                            #             masterServiceName: string
+                            #             serviceDescription: string
+                            #             serviceDisplayPriority: number
+                            #             product: string
+                            #             masterPackage: string
+                            #             packageDesc: string
+                            #             packageDetailItemDesc: string
+                            #             packageDetailItemAmount: string
+                            #             packageInvoiceSortValue: number
+                            #             packageItemAmount: string
+                            #             packageDisplayPriority: number
+                            #             promoDurationDays: number
+                            #             truePromotion: string
+                            #             searchType: string
+                            #             lineNumber: number
+                            #             itemQuantity: number
+                            #             billingDate: number
+                            #             monthlyCharge: number
+                            #             billingCycle: number
+                            #             iseriesFileName: string
+                            #             billLevel: string
+                            #             ratingDiscountDescription: string
+                            #             customerIdNumber: number
+                            #             billIdNumber: number
+                            #             customerLastName: string
+                            #             customerFirstName: string
+                            #             customerNameFormat: string
+                            #             productDescription: string
+                            #             promotionEndDate: number
+                            #             promotionMonthsUsed: number
+                            #             promotionEtfItem: string
+                            #             promotionTotalMonths: number
+                            #             itemStatus: string
+                            #             itemDisconnectReason: string
+                            #             itemSpeed: string
+                            #             packageKeyProduct: string
+                            #             itemKeyProduct: string
+                            #             contractEndDate: number
+                            #             contractMonthsUsed: number
+                            #             contractTotalMonths: number
+                            #             contractDurationDays: number
+                            # resultSet3:
+                            #     type: array
+                            #     items:
+                            #         type: object
+                            #         properties:
+                            #             billingPhoneExc: number
+                            #             billingPhoneLin: number
+                            #             billingPhoneRes: number
+                            #             memberPhoneExc: number
+                            #             memberPhoneLin: number
+                            #             memberPhoneRes: number
+                            #             billingNumber: string
+                            #             memberNumber: string
+                            #             orderNumber: string
+                            #             portsRequired: number
+                            #             itemBandwidthConsumed: number
+                            # resultSet4:
+                            #     type: array
+                            #     items:
+                            #         type: object
+                            #         properties:
+                            #             billingPhoneExc: number
+                            #             billingPhoneLin: number
+                            #             billingPhoneRes: number
+                            #             memberPhoneExc: number
+                            #             memberPhoneLin: number
+                            #             memberPhoneRes: number
+                            #             billingNumber: string
+                            #             memberNumber: string
+                            #             orderNumber: string
+                            #             itemConnectionNumber: number
+                            #             connectionBandwidthAllowed: number

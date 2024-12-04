@@ -1,0 +1,159 @@
+get:
+    tags:
+        - nne/siebel
+    summary: Asset Attributes
+    description: Get attributes for an asset and its child assets. This endpoint applies to NNE only.
+    parameters:
+        - name: assetId
+          in: query
+          required: true
+          schema:
+              type: string
+          description: NNE Asset Id
+    responses:
+        200:
+            description: Successful response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            settings:
+                                type: object
+                                $ref: '../../../components/schemas/settings.yaml#/schemas/Settings'
+                                nullable: true
+                                example:
+                                    sourceEnvironment: 'SITNNE'
+                                    clientApplication: 'COMMON_UI'
+                                    currentUser: 'KXCROWL'
+                                    transactionId: '3c77d010-8fbc-47bb-b7ed-512fff3d9209'
+                                    clientFunction: ''
+                                    activeBillId: ''
+                                    activeMemberId: ''
+                                    activeMemberNum: ''
+                                    sourceStack: 'NNE'
+                            messages:
+                                type: object
+                                $ref: '../../../components/schemas/common.yaml#/schemas/messageResultSet'
+                                example:
+                                    group: ''
+                                    sentToExtInterface: ''
+                                    callingProgram: ''
+                                    sqlStateCode: ''
+                                    dataSequence: 0
+                                    sqlStateText: ''
+                                    callingProcedure: ''
+                                    msgText: ''
+                                    msgSeverity: 50
+                                    sqlStateMsgId: ''
+                                    msgFile: ''
+                                    sentToMsgQueue: ''
+                                    guid: ''
+                                    dataAlias: ''
+                                    dataField: ''
+                                    msgId: ''
+                                    dataValue: ''
+                                    msgData: ''
+                                    dataFile: ''
+                            attributes:
+                                type: array
+                                description: List of attributes associated with the asset.
+                                items:
+                                    type: object
+                                    properties:
+                                        assetId:
+                                            type: string
+                                            example: 1-DIV-4357
+                                        product:
+                                            type: string
+                                            example: RVS_Lite
+                                        assetStatus:
+                                            type: string
+                                            example: Active
+                                        attributeId:
+                                            type: string
+                                            example: 1-1TIH-3481
+                                        attributeDefinitionName:
+                                            type: string
+                                            example: ANR
+                                        attributeName:
+                                            type: string
+                                            example: Assignment Not Required (ANR)
+                                        attributeValue:
+                                            type: string
+                                            nullable: true
+                                            example: Select Option
+                                        primaryFlag:
+                                            type: string
+                                            example: N
+                                        hiddenFlag:
+                                            type: string
+                                            example: N
+                    example:
+                        settings:
+                            sourceEnvironment: SITNNE
+                            sourceStack: NNE
+                            clientApplication: ''
+                            currentUser: ''
+                            transactionId: ''
+                            clientFunction: ''
+                            activeBillId: ''
+                            activeMemberId: ''
+                            activeMemberNum: ''
+                        messages:
+                            - group: ''
+                              sentToExtInterface: ''
+                              callingProgram: ''
+                              sqlStateCode: ''
+                              dataSequence: 0
+                              sqlStateText: ''
+                              callingProcedure: ''
+                              msgText: ''
+                              msgSeverity: 0
+                              sqlStateMsgId: ''
+                              msgFile: ''
+                              sentToMsgQueue: ''
+                              guid: ''
+                              dataAlias: ''
+                              dataField: ''
+                              msgId: ''
+                              dataValue: ''
+                              msgData: ''
+                              dataFile: ''
+                        attributes:
+                            - assetId: 1-DIV-4357
+                              product: RVS_Lite
+                              assetStatus: Active
+                              attributeId: 1-1TIH-3481
+                              attributeDefinitionName: ANR
+                              attributeName: Assignment Not Required (ANR)
+                              attributeValue: Select Option
+                              primaryFlag: N
+                              hiddenFlag: N
+                            - assetId: 1-DIV-4357
+                              product: RVS_Lite
+                              assetStatus: Active
+                              attributeId: 1-1TIH-3482
+                              attributeDefinitionName: BDAN
+                              attributeName: Block National Directory Assistance (BDAN)
+                              attributeValue: null
+                              primaryFlag: N
+                              hiddenFlag: N
+                            - assetId: 1-DIV-4357
+                              product: RVS_Lite
+                              assetStatus: Active
+                              attributeId: 1-1TIH-4957
+                              attributeDefinitionName: TSP
+                              attributeName: Service Priority (TSP)
+                              attributeValue: Select Option
+                              primaryFlag: N
+                              hiddenFlag: N
+                            - assetId: 1-DIV-4357
+                              product: RVS_Lite
+                              assetStatus: Active
+                              attributeId: 1-1U54-1452
+                              attributeDefinitionName: CIDD
+                              attributeName: Caller ID Display (CIDD)
+                              attributeValue: HUSSEY, PHILLIP
+                              primaryFlag: N
+                              hiddenFlag: N

@@ -1,0 +1,141 @@
+post:
+    tags:
+        - nne/siebel
+    summary: 'Order Put SI.'
+    description: >
+        TLSRV$SOINFOPUTGENERAL in Prism and Set Line Items API in Siebel. This API allows
+        updating or disconnecting service instances with specific attributes.
+    requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object
+                    properties:
+                        orderNumber:
+                            type: string
+                            description: Unique identifier for the order.
+                            example: '1-10007077582'
+                        serviceInstances:
+                            type: array
+                            description: List of service instances to be updated or disconnected.
+                            items:
+                                type: object
+                                properties:
+                                    lineNumber:
+                                        type: string
+                                        nullable: true
+                                        description: Line number for the service instance, if applicable.
+                                        example: null
+                                    itemCode:
+                                        type: string
+                                        description: Item code for the service instance.
+                                        example: 'RIS'
+                                    itemSequence:
+                                        type: string
+                                        description: Unique sequence identifier for the service instance.
+                                        example: '1-4LX2EIB'
+                                    actionCode:
+                                        type: string
+                                        description: Action to be performed on the service instance (e.g., Disconnect, Update).
+                                        example: 'Disconnect'
+                                    attributes:
+                                        type: array
+                                        description: List of attributes to apply to the service instance.
+                                        items:
+                                            type: object
+                                            properties:
+                                                name:
+                                                    type: string
+                                                    description: Name of the attribute.
+                                                    example: 'REFTO'
+                                                value:
+                                                    type: string
+                                                    description: Value of the attribute.
+                                                    example: '8025551234'
+                example:
+                    orderNumber: '1-10007077582'
+                    serviceInstances:
+                        - lineNumber: null
+                          itemCode: 'RIS'
+                          itemSequence: '1-4LX2EIB'
+                          actionCode: 'Disconnect'
+                          attributes:
+                              - name: 'REFTO'
+                                value: '8025551234'
+    responses:
+        200:
+            description: Successful response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            settings:
+                                type: object
+                                $ref: '../../../components/schemas/settings.yaml#/schemas/Settings'
+                                nullable: true
+                                example:
+                                    sourceEnvironment: 'SITNNE'
+                                    clientApplication: 'COMMON_UI'
+                                    currentUser: 'KXCROWL'
+                                    transactionId: '3c77d010-8fbc-47bb-b7ed-512fff3d9209'
+                                    clientFunction: ''
+                                    activeBillId: ''
+                                    activeMemberId: ''
+                                    activeMemberNum: ''
+                                    sourceStack: 'NNE'
+                            messages:
+                                type: object
+                                $ref: '../../../components/schemas/common.yaml#/schemas/messageResultSet'
+                                example:
+                                    group: ''
+                                    sentToExtInterface: ''
+                                    callingProgram: ''
+                                    sqlStateCode: ''
+                                    dataSequence: 0
+                                    sqlStateText: ''
+                                    callingProcedure: ''
+                                    msgText: ''
+                                    msgSeverity: 50
+                                    sqlStateMsgId: ''
+                                    msgFile: ''
+                                    sentToMsgQueue: ''
+                                    guid: ''
+                                    dataAlias: ''
+                                    dataField: ''
+                                    msgId: ''
+                                    dataValue: ''
+                                    msgData: ''
+                                    dataFile: ''
+                    example:
+                        settings:
+                            sourceEnvironment: 'SITNNE'
+                            clientApplication: ''
+                            currentUser: ''
+                            transactionId: ''
+                            clientFunction: ''
+                            activeBillId: ''
+                            activeMemberId: ''
+                            activeMemberNum: ''
+                            sourceStack: 'NNE'
+                        messages:
+                            - group: ''
+                              sentToExtInterface: ''
+                              callingProgram: ''
+                              sqlStateCode: ''
+                              dataSequence: 0
+                              sqlStateText: ''
+                              callingProcedure: ''
+                              msgText: ''
+                              msgSeverity: 0
+                              sqlStateMsgId: ''
+                              msgFile: ''
+                              sentToMsgQueue: ''
+                              guid: ''
+                              dataAlias: ''
+                              dataField: ''
+                              msgId: ''
+                              dataValue: ''
+                              msgData: ''
+                              dataFile: ''

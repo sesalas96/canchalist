@@ -1,0 +1,138 @@
+openapi: 3.0.0
+info:
+    title: 'CRM Orders API'
+    description: 'API to expose CRM Orders Repository Access'
+    version: '1.0.0'
+
+servers:
+    - url: '{url}/crm-orders-{environment}/api/v1'
+      description: 'API server for different environments'
+      variables:
+          url:
+              default: 'https://localhost:3000'
+              enum:
+                  - 'https://internal-k8s-crm-orders-crm-orders-c002e0a15e-1315135581.us-east-1.elb.amazonaws.com' # to be defined with sean
+                  - 'https://qa-url-in-.amazonaws.com' # to be defined with sean
+              description: 'The base URL for the API server'
+
+          environment:
+              default: 'qa'
+              enum:
+                  - 'dev'
+                  - 'qa'
+                  - 'prod'
+                  - 'test'
+              description: 'The environment for the API server'
+
+paths:
+    /ficmsFindAppointments:
+        $ref: './paths/nne/nneitems/find-appointments.yaml'
+    /ficmsBookAppointment:
+        $ref: './paths/nne/nneitems/book-appointment.yaml'
+    /ficmsCancelAppointment:
+        $ref: './paths/nne/nneitems/cancel-appointment.yaml'
+    /GETMONEYBACKGUARANTEE:
+        $ref: './paths/nne/kenan/get-money-back-guarantee.yaml'
+    /GETTERMINATIONFEES:
+        $ref: './paths/nne/kenan/get-termination-fees.yaml'
+    /requireProfessionalInstall:
+        $ref: './paths/nne/kenan/require-professional-install.yaml'
+    /reserveTn:
+        $ref: './paths/nne/m6/reverse-tn.yaml'
+    /cancelAppointment:
+        $ref: './paths/nne/siebel/cancel-appointment.yaml'
+    /getAssetAttribute:
+        $ref: './paths/nne/siebel/get-assets-attributes.yaml'
+    /ORDERPUTSI:
+        $ref: './paths/nne/siebel/order-put-si.yaml'
+    /productConstraintsValidation:
+        $ref: './paths/nne/siebel/product-constraint-validation.yaml'
+    /putOrderLineAttributes:
+        $ref: './paths/nne/siebel/put-order-line-attributes.yaml'
+    /setOrderAppointmentDetails:
+        $ref: './paths/nne/siebel/set-order-appointment-details.yaml'
+    /validateTPV:
+        $ref: './paths/nne/siebel/validate-tpv.yaml'
+    /submitTPV:
+        $ref: './paths/nne/siebel/submit-tpv.yaml'
+    /updateOrderDetails:
+        $ref: './paths/nne/siebel/update-orders-details.yaml'
+    /updateEmployeeSalesCompensation:
+        $ref: './paths/nne/siebel/update-employee-sales-compensation.yaml'
+    /serviceOrderSearch:
+        $ref: './paths/nne/solr/service-order-search.yaml'
+    /items:
+        $ref: './paths/prism/functions/items.yaml'
+    /overview:
+        $ref: './paths/prism/member-info/overview.yaml'
+    /serviceOrderSearch2:
+        $ref: './paths/prism/read-functions/service-order-search-v2.yaml'
+    /TLSRVSOINFOADDAPPTBOOK:
+        $ref: './paths/tl/srvs/book-appt.yaml'
+    /TLSRVMBRSOCONVERTITEMSTOCART:
+        $ref: './paths/tl/srvs/convert-items-to-cart.yaml'
+    /TLSRVSOINFOEXECCREATE:
+        $ref: './paths/tl/srvs/create-shell-order.yaml'
+    /TLBILMBRSOGETGENBILLINFO:
+        $ref: './paths/tl/bill/get-bill-info.yaml'
+    /TLBILMBRSOGETCARRIERS:
+        $ref: './paths/tl/bill/get-carriers.yaml'
+    /TLBILMBRSOGETCONTACTINFO:
+        $ref: './paths/tl/bill/get-contact-info.yaml'
+    /TLBILMBRSOGETSEREQP:
+        $ref: './paths/tl/bill/get-service-equipment.yaml'
+    /TLBILMBRTREEGETMAIN:
+        $ref: './paths/tl/bill/get-tree-view.yaml'
+    /TLBILMBRINFOGETSO:
+        $ref: './paths/tl/bill/get-so.yaml'
+    /ping:
+        get:
+            tags:
+                - mics
+            summary: Pong
+            description: Returns "pong" to confirm service is alive.
+            responses:
+                200:
+                    description: Successful response
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: pong
+    /healthcheck:
+        get:
+            tags:
+                - mics
+            summary: Returns the service health status.
+            responses:
+                200:
+                    description: Health status response
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: up
+                                        
+components:
+    schemas:
+        Settings:
+            $ref: './components/schemas/settings.yaml#/schemas/Settings'
+        NUM_PHONE_EXC:
+            $ref: './components/schemas/common.yaml#/schemas/NUM_PHONE_EXC'
+        NUM_PHONE_LIN:
+            $ref: './components/schemas/common.yaml#/schemas/NUM_PHONE_LIN'
+        NUM_PHONE_RES:
+            $ref: './components/schemas/common.yaml#/schemas/NUM_PHONE_RES'
+        STR_ORDER_NUMBER:
+            $ref: './components/schemas/common.yaml#/schemas/STR_ORDER_NUMBER'
+        DATE_NUMBER:
+            $ref: './components/schemas/common.yaml#/schemas/DATE_NUMBER'
+        NAME_FORMAT_FLAG:
+            $ref: './components/schemas/common.yaml#/schemas/NAME_FORMAT_FLAG'
+        TIME_NUMBER:
+            $ref: './components/schemas/common.yaml#/schemas/TIME_NUMBER'
+        messageResultSet:
+            $ref: './components/schemas/common.yaml#/schemas/messageResultSet'

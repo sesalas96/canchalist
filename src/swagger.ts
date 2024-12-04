@@ -5,9 +5,9 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'CCI Node API',
+            title: 'Canchalist',
             version: '1.0.0',
-            description: 'CCI Node API',
+            description: 'Canchalist',
         },
         servers: [
             {

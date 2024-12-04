@@ -1,0 +1,182 @@
+get:
+    tags:
+        - nne/kenan
+    summary: Retrieve Termination Fees
+    description: >
+        Retrieves termination fees for a specific order number. It maps to the `TLBIL$MBRSOGETSEREQP` in Prism and the "Get Termination Fees" API in Kenan.
+    parameters:
+        - name: orderNumber
+          in: query
+          required: true
+          schema:
+              type: string
+          description: The order number.
+        - name: disconnectDate
+          in: query
+          required: false
+          schema:
+              type: integer
+              nullable: true
+          description: Disconnect Date (applicable for NNE).
+    responses:
+        '200':
+            description: Successful response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            settings:
+                                type: object
+                                $ref: '../../../components/schemas/settings.yaml#/schemas/Settings'
+                                nullable: true
+                                example:
+                                    sourceEnvironment: 'SITNNE'
+                                    clientApplication: 'COMMON_UI'
+                                    currentUser: 'KXCROWL'
+                                    transactionId: '3c77d010-8fbc-47bb-b7ed-512fff3d9209'
+                                    clientFunction: ''
+                                    activeBillId: ''
+                                    activeMemberId: ''
+                                    activeMemberNum: ''
+                                    sourceStack: 'NNE'
+                            messages:
+                                type: object
+                                $ref: '../../../components/schemas/common.yaml#/schemas/messageResultSet'
+                                example:
+                                    group: ''
+                                    sentToExtInterface: ''
+                                    callingProgram: ''
+                                    sqlStateCode: ''
+                                    dataSequence: 0
+                                    sqlStateText: ''
+                                    callingProcedure: ''
+                                    msgText: ''
+                                    msgSeverity: 50
+                                    sqlStateMsgId: ''
+                                    msgFile: ''
+                                    sentToMsgQueue: ''
+                                    guid: ''
+                                    dataAlias: ''
+                                    dataField: ''
+                                    msgId: ''
+                                    dataValue: ''
+                                    msgData: ''
+                                    dataFile: ''
+                            resultSet2:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        memberNumber:
+                                            type: string
+                                            example: '1-3MZAIYO'
+                                        billingNumber:
+                                            type: string
+                                            example: '6035364600490'
+                                        itemCode:
+                                            type: string
+                                            example: 'POTSPKG2-TERM'
+                                        itemSequence:
+                                            type: string
+                                            example: '1-3MN4S9Z'
+                                        itemDesc:
+                                            type: string
+                                            example: 'EPakII Early Termination'
+                                        itemRate:
+                                            type: number
+                                            example: 200.0
+                                        product:
+                                            type: string
+                                            example: ''
+                                        productDescription:
+                                            type: string
+                                            example: ''
+                                        lineNumber:
+                                            type: integer
+                                            example: 0
+                                        serviceAccountNumber:
+                                            type: string
+                                            example: '6035364600490S1'
+                                        orderNumber:
+                                            type: string
+                                            example: '1-17378184498'
+                                        memberNumberDescription:
+                                            type: string
+                                            example: '6035362210'
+                                        commonServiceType:
+                                            type: string
+                                            example: 'RXR_Lite'
+                                        commonServiceTypeDescription:
+                                            type: string
+                                            example: 'Centrex Station Line - Primary'
+                                        promoDurationDays:
+                                            type: integer
+                                            example: 365
+                                        outDate:
+                                            type: integer
+                                            example: 20210302
+                                        dateOriginallyInstalled:
+                                            type: integer
+                                            example: 0
+                                        inDate:
+                                            type: integer
+                                            example: 20200302
+                                        activityFlag:
+                                            type: string
+                                            example: 'I'
+                                        itemQuantity:
+                                            type: integer
+                                            example: 1
+                    example:
+                        settings:
+                            sourceEnvironment: 'SITNNE'
+                            sourceStack: 'NNE'
+                            clientApplication: ''
+                            currentUser: ''
+                            transactionId: ''
+                            clientFunction: ''
+                            activeBillId: ''
+                            activeMemberId: ''
+                            activeMemberNum: ''
+                        messages:
+                            - group: ''
+                              sentToExtInterface: ''
+                              callingProgram: ''
+                              sqlStateCode: ''
+                              dataSequence: 0
+                              sqlStateText: ''
+                              callingProcedure: ''
+                              msgText: ''
+                              msgSeverity: 0
+                              sqlStateMsgId: ''
+                              msgFile: ''
+                              sentToMsgQueue: ''
+                              guid: ''
+                              dataAlias: ''
+                              dataField: ''
+                              msgId: ''
+                              dataValue: ''
+                              msgData: ''
+                              dataFile: ''
+                        resultSet2:
+                            - memberNumber: '1-3MZAIYO'
+                              billingNumber: '6035364600490'
+                              itemCode: 'POTSPKG2-TERM'
+                              itemSequence: '1-3MN4S9Z'
+                              itemDesc: 'EPakII Early Termination'
+                              itemRate: 200.0
+                              product: ''
+                              productDescription: ''
+                              lineNumber: 0
+                              serviceAccountNumber: '6035364600490S1'
+                              orderNumber: '1-17378184498'
+                              memberNumberDescription: '6035362210'
+                              commonServiceType: 'RXR_Lite'
+                              commonServiceTypeDescription: 'Centrex Station Line - Primary'
+                              promoDurationDays: 365
+                              outDate: 20210302
+                              dateOriginallyInstalled: 0
+                              inDate: 20200302
+                              activityFlag: 'I'
+                              itemQuantity: 1

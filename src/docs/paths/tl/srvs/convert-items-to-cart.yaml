@@ -1,0 +1,184 @@
+get:
+    tags:
+        - tl/srvs
+    summary: Get Items for Customer in a Cart
+    description: Retrieve items for a customer in a cart.
+    parameters:
+        - name: orderNumber
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+          description: Optional for Prism, N/A for NNE.
+        - name: billingId
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: memberNumber
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: addressId
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: memberServiceTypeClass
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: productToCalculate
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+    responses:
+        '200':
+            description: Successful response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            settings:
+                                type: object
+                                $ref: '../../../components/schemas/settings.yaml#/schemas/Settings'
+                                nullable: true
+                                example:
+                                    sourceEnvironment: 'SITNNE'
+                                    clientApplication: 'COMMON_UI'
+                                    currentUser: 'KXCROWL'
+                                    transactionId: '3c77d010-8fbc-47bb-b7ed-512fff3d9209'
+                                    clientFunction: ''
+                                    activeBillId: ''
+                                    activeMemberId: ''
+                                    activeMemberNum: ''
+                                    sourceStack: 'NNE'
+                            messages:
+                                type: object
+                                $ref: '../../../components/schemas/common.yaml#/schemas/messageResultSet'
+                                example:
+                                    group: ''
+                                    sentToExtInterface: ''
+                                    callingProgram: ''
+                                    sqlStateCode: ''
+                                    dataSequence: 0
+                                    sqlStateText: ''
+                                    callingProcedure: ''
+                                    msgText: ''
+                                    msgSeverity: 50
+                                    sqlStateMsgId: ''
+                                    msgFile: ''
+                                    sentToMsgQueue: ''
+                                    guid: ''
+                                    dataAlias: ''
+                                    dataField: ''
+                                    msgId: ''
+                                    dataValue: ''
+                                    msgData: ''
+                                    dataFile: ''
+                            resultSet2:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        webIdLevel1:
+                                            type: string
+                                            example: 'FID-1G'
+                                        webSelectionLevel1:
+                                            type: string
+                                            example: 'FID-1G'
+                                        webSelectionLevel1Category:
+                                            type: string
+                                            example: 'PLAN'
+                                        webIdLevel2:
+                                            type: string
+                                            nullable: true
+                                            example: null
+                                        webSelectionLevel2:
+                                            type: string
+                                            nullable: true
+                                            example: null
+                                        webSelectionLevel2Category:
+                                            type: string
+                                            nullable: true
+                                            example: null
+                                        webProductType:
+                                            type: string
+                                            nullable: true
+                                            example: null
+                                        webProductDescription:
+                                            type: string
+                                            nullable: true
+                                            example: null
+                                        market:
+                                            type: string
+                                            nullable: true
+                                            example: null
+                                        tariff:
+                                            type: number
+                                            example: 0.0
+                                        serviceType:
+                                            type: string
+                                            nullable: true
+                                            example: null
+                                        recurringAmount:
+                                            type: number
+                                            example: 90.0
+                                        quantity:
+                                            type: integer
+                                            example: 1
+                    example:
+                        settings:
+                            sourceEnvironment: 'SITNNE'
+                            sourceStack: 'NNE'
+                            clientApplication: ''
+                            currentUser: ''
+                            transactionId: ''
+                            clientFunction: ''
+                            activeBillId: ''
+                            activeMemberId: ''
+                            activeMemberNum: ''
+                        messages:
+                            - group: ''
+                              sentToExtInterface: ''
+                              callingProgram: ''
+                              sqlStateCode: ''
+                              dataSequence: 0
+                              sqlStateText: ''
+                              callingProcedure: ''
+                              msgText: ''
+                              msgSeverity: 0
+                              sqlStateMsgId: ''
+                              msgFile: ''
+                              sentToMsgQueue: ''
+                              guid: ''
+                              dataAlias: ''
+                              dataField: ''
+                              msgId: ''
+                              dataValue: ''
+                              msgData: ''
+                              dataFile: ''
+                        resultSet2:
+                            - webIdLevel1: 'FID-1G'
+                              webSelectionLevel1: 'FID-1G'
+                              webSelectionLevel1Category: 'PLAN'
+                              webIdLevel2: null
+                              webSelectionLevel2: null
+                              webSelectionLevel2Category: null
+                              webProductType: null
+                              webProductDescription: null
+                              market: null
+                              tariff: 0.0
+                              serviceType: null
+                              recurringAmount: 90.0
+                              quantity: 1

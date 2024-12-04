@@ -1,0 +1,98 @@
+schemas:
+  NUM_PHONE_EXC:
+    type: number
+    description: >
+      This is the first 6 digits of the 10-digit Phone Number. If there are fewer than 10 digits in the phone number, 
+      you need to left pad the number with zeros to 10 digits, then grab the first 6 digits. This is a number, and 
+      left-padded zeros should be removed from the 6 digits to make it a true number. (Casting the string as a number 
+      should remove left-padded zeros.) If the reassignment digit value is included in the phone number, the above 
+      still holds true if you left pad with zeros to 11 digits, then remove the last digit, which is the reassignment 
+      number. See examples.
+    example: 123456
+    
+  NUM_PHONE_LIN:
+    type: number
+    description: >
+      This is the last 4 digits of the 10-digit Phone Number. If there are fewer than 10 digits in the phone number, 
+      you need to left pad the number with zeros to 10 digits, then grab the last 4 digits. This is a number, and 
+      left-padded zeros should be removed from the 4 digits to make it a true number. (Casting the string as a number 
+      should remove left-padded zeros.) If the reassignment digit value is included in the phone number, the above 
+      still holds true if you left pad with zeros to 11 digits, then remove the last digit, which is the reassignment 
+      number. See examples.
+    example: 1234
+
+  NUM_PHONE_RES:
+    type: number
+    description: >
+      This is a single digit. Normally, this will be a zero value, but in some cases, when looking up historical 
+      customer information, it may be necessary to pass the correct reassignment number. A zero value equates to the 
+      most current customer, a value of 1 would mean the previous customer, 2 would be the previous beyond that, etc.
+    example: 0
+
+  STR_ORDER_NUMBER:
+    type: string
+    description: "Example string values for order numbers."
+    example: "0001234567"
+      
+  DATE_NUMBER:
+    type: number
+    description: "The format for this Prism Date type is always YYYYMMDD as a numeric value."
+    example: 20201231
+    
+  NAME_FORMAT_FLAG:
+    type: string
+    description: "This flag is useful in displaying/inputting the corresponding first name and last name fields. The rules are that if the value is 'Y', the order is first name space last name; otherwise, it is last name space first name. Trim considerations apply when used from response fields: if 'Y', right-trim the first name and fully trim the last name before concatenating with a space. Otherwise, trim the whole concatenated display. Ensure the display system can output the maximum length of concatenated values by consulting a Prism SME for max lengths of the first and last name fields."
+    example: "Y"
+
+  TIME_NUMBER:
+    type: number
+    description: "The format for this Prism Time type is always HHMI as a numeric value."
+    example: 800
+
+  messageResultSet:
+    type: array
+    description: "This is an array of message objects. The array can have 0 to many objects. For APIs with GET in their name, there may be messages with an MSG_SEVERITY of 50 or greater, which can generally be ignored by the caller. However, if the purpose of an API is to update information, these types of errors should NOT be ignored."
+    items:
+      type: object
+      properties:
+        GROUP:
+          type: string
+        SENT_TO_EXT_INTERFACE:
+          type: string
+        CALLING_PROGRAM:
+          type: string
+        SQL_STATE_CODE:
+          type: string
+        DATA_SEQUENCE:
+          type: number
+        SQL_STATE_TEXT:
+          type: string
+        CALLING_PROCEDURE:
+          type: string
+        MSG_TEXT:
+          type: string
+          description: "The English description of the message."
+        MSG_SEVERITY:
+          type: number
+          description: "A message severity of >= 50 is an actionable error. Any number < 50 is informational and may or may not be pertinent to the caller."
+        SQL_STATE_MSG_ID:
+          type: string
+        MSG_FILE:
+          type: string
+        SENT_TO_MSG_QUEUE:
+          type: string
+        GUID:
+          type: string
+        DATA_ALIAS:
+          type: string
+        DATA_FIELD:
+          type: string
+        MSG_ID:
+          type: string
+          description: "The internal message number in Prism. This can be used to help Prism System SME troubleshoot any specific error."
+        DATA_VALUE:
+          type: string
+        MSG_DATA:
+          type: string
+        DATA_FILE:
+          type: string

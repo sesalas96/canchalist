@@ -1,0 +1,241 @@
+get:
+    summary: "Get items available URL"
+    description: "TLCTL$MBRSOGETITEMSAVAILABLE in Prism and Get Account Vacation Rate API in Kenan"
+    tags:
+        - prism/functions
+    parameters:
+        - name: memberNumber
+          in: query
+          schema:
+              type: string
+              nullable: true
+          required: false
+          description: "PRISM MemberNumber (EXC || LIN || RES) or NNE BAN"
+        - name: orderNumber
+          in: query
+          schema:
+              type: string
+              nullable: true
+          required: false
+          description: "Prism Order number"
+        - name: product
+          in: query
+          schema:
+              type: string
+              nullable: true
+          required: false
+          description: "Prism Product"
+        - name: billLevel
+          in: query
+          schema:
+              type: string
+              nullable: true
+          required: false
+          description: "Prism Bill Level"
+        - name: fullgroup
+          in: query
+          schema:
+              type: string
+              nullable: true
+          required: false
+          description: "Prism Full Group"
+        - name: itemFilter
+          in: query
+          schema:
+              type: string
+              nullable: true
+          required: false
+          description: "Prism only. Accepts multiple values - e.g. 'ITEM1', 'ITEM2'"
+        - name: sendTotals
+          in: query
+          schema:
+              type: string
+              nullable: true
+          required: false
+          description: "Prism Send Totals"
+        - name: serviceInstanceRowIdFilter
+          in: query
+          schema:
+              type: string
+              nullable: true
+          required: false
+          description: "NNE Only"
+    responses:
+        200:
+            description: "Successful response"
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            url:
+                                type: string
+                            metadata:
+                                type: object
+                                properties:
+                                    sourceEnvironment:
+                                        type: string
+                                        example: "TLP1CON"
+                                    clientApplication:
+                                        type: string
+                                        example: "COMMON_UI"
+                                    currentUser:
+                                        type: string
+                                        example: "KXCROWL"
+                                    transactionId:
+                                        type: string
+                                        example: "3c77d010-8fbc-47bb-b7ed-512fff3d9209"
+                                    clientFunction:
+                                        type: string
+                                    activeBillId:
+                                        type: string
+                                    activeMemberId:
+                                        type: string
+                                    activeMemberNum:
+                                        type: string
+                                    sourceStack:
+                                        type: string
+                                        example: "PRISM"
+                            messages:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        msgFile:
+                                            type: string
+                                            example: "ENVMSGF"
+                                        dataFile:
+                                            type: string
+                                            example: "EIT3103P01"
+                                        sqlStateCode:
+                                            type: string
+                                            example: ""
+                                        msgText:
+                                            type: string
+                                            example: "Cursor EIT3103C01 opened on QTEMP.EIT3103P01 in EIT3103RE."
+                                        dataField:
+                                            type: string
+                                            example: ""
+                                        msgData:
+                                            type: string
+                                            example: "EIT3103C01 QTEMP EIT3103P01EIT3103RE"
+                                        dataAlias:
+                                            type: string
+                                            example: ""
+                                        sentToMsgQueue:
+                                            type: string
+                                            example: ""
+                                        msgSeverity:
+                                            type: integer
+                                            example: 0
+                                        callingProgram:
+                                            type: string
+                                            example: "EIT3103RE"
+                                        dataValue:
+                                            type: string
+                                            example: ""
+                                        guid:
+                                            type: string
+                                            example: "21327EW0200924100044103960073001"
+                                        sqlStateMsgId:
+                                            type: string
+                                            example: ""
+                                        sqlStateText:
+                                            type: string
+                                            example: ""
+                                        msgId:
+                                            type: string
+                                            example: "EIM0110"
+                                        dataSequence:
+                                            type: integer
+                                            example: 0
+                                        group:
+                                            type: string
+                                            example: "EIT3103RE"
+                                        callingProcedure:
+                                            type: string
+                                            example: "EIA0110R"
+                                        sentToExtInterface:
+                                            type: string
+                                            example: ""
+                            resultSet2:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        itemLdAdminFee:
+                                            type: string
+                                            example: "N"
+                                        itemSendToFms:
+                                            type: string
+                                            example: "Y"
+                                        itemInternetSpeed:
+                                            type: string
+                                            example: "N"
+                                        itemSubCategory1:
+                                            type: string
+                                            example: "XCLUDE"
+                                        itemSubCategory4:
+                                            type: string
+                                            example: ""
+                                        itemSubCategory3:
+                                            type: string
+                                            example: ""
+                                        itemSubCategory2:
+                                            type: string
+                                            example: ""
+                                        itemTollRestriction:
+                                            type: string
+                                            example: "N"
+                                        itemWeight:
+                                            type: integer
+                                            example: 0
+                                        prorateFlag:
+                                            type: string
+                                            example: "N"
+                                        itemTollFl:
+                                            type: string
+                                            example: "N"
+                                        itemThirdPartyNotify:
+                                            type: string
+                                            example: "N"
+                                        effectiveDate:
+                                            type: integer
+                                            example: 0
+                                        itemHighDefinition:
+                                            type: string
+                                            example: "N"
+                                        itemCustSuppliedPayph:
+                                            type: string
+                                            example: "N"
+                                        itemDpa:
+                                            type: string
+                                            example: "N"
+                                        packageItemAmount:
+                                            type: string
+                                            example: ""
+                                        itemDialupInternet:
+                                            type: string
+                                            example: "N"
+                                        gainLossClass:
+                                            type: string
+                                            example: "90"
+                                        itemBandwidthConsumed:
+                                            type: number
+                                            format: float
+                                            example: 0.00
+                                        itemCategoryMaster:
+                                            type: string
+                                            example: "XCLUDE"
+                                        itemRemoveWithNdDisco:
+                                            type: string
+                                            example: "N"
+                                        packageDetailItemAmount:
+                                            type: string
+                                            example: ""
+                                        itemLifeLineCredit:
+                                            type: string
+                                            example: "N"
+                                        businessResidentialInd:
+                                            type: string
+                                            example: ""

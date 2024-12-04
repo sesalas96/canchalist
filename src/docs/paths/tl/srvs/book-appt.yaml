@@ -1,0 +1,191 @@
+post:
+    tags:
+        - tl/srvs
+    summary: Book Appointment
+    description: "Book an appointment for a Technician to perform the install."
+    requestBody:
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              orderNumber:
+                type: string
+                example: "0102135846"
+              requiredFromDate:
+                type: integer
+                example: 20210212
+              timeFrom:
+                type: integer
+                example: 800
+              timeTo:
+                type: integer
+                example: 1200
+    responses:
+      200:
+        description: Appointment booked successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                settings:
+                  type: object
+                  properties:
+                    sourceEnvironment:
+                      type: string
+                      example: "TLP1LUF"
+                    clientApplication:
+                      type: string
+                      example: "COMMON_UI"
+                    currentUser:
+                      type: string
+                      example: "KXCROWL"
+                    transactionId:
+                      type: string
+                      example: "3c77d010-8fbc-47bb-b7ed-512fff3d9209"
+                    clientFunction:
+                      type: string
+                      nullable: true
+                      example: ""
+                    activeBillId:
+                      type: string
+                      nullable: true
+                      example: ""
+                    activeMemberId:
+                      type: string
+                      nullable: true
+                      example: ""
+                    activeMemberNum:
+                      type: string
+                      nullable: true
+                      example: ""
+                    sourceStack:
+                      type: string
+                      example: "PRISM"
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      group:
+                        type: string
+                        nullable: true
+                        example: ""
+                      sentToExtInterface:
+                        type: string
+                        nullable: true
+                        example: ""
+                      callingProgram:
+                        type: string
+                        nullable: true
+                        example: ""
+                      sqlStateCode:
+                        type: string
+                        nullable: true
+                        example: ""
+                      dataSequence:
+                        type: integer
+                        example: 0
+                      sqlStateText:
+                        type: string
+                        nullable: true
+                        example: ""
+                      callingProcedure:
+                        type: string
+                        nullable: true
+                        example: ""
+                      msgText:
+                        type: string
+                        nullable: true
+                        example: ""
+                      msgSeverity:
+                        type: integer
+                        example: 0
+                      sqlStateMsgId:
+                        type: string
+                        nullable: true
+                        example: ""
+                      msgFile:
+                        type: string
+                        nullable: true
+                        example: ""
+                      sentToMsgQueue:
+                        type: string
+                        nullable: true
+                        example: ""
+                      guid:
+                        type: string
+                        nullable: true
+                        example: ""
+                      dataAlias:
+                        type: string
+                        nullable: true
+                        example: ""
+                      dataField:
+                        type: string
+                        nullable: true
+                        example: ""
+                      msgId:
+                        type: string
+                        nullable: true
+                        example: ""
+                      dataValue:
+                        type: string
+                        nullable: true
+                        example: ""
+                      msgData:
+                        type: string
+                        nullable: true
+                        example: ""
+                      dataFile:
+                        type: string
+                        nullable: true
+                        example: ""
+                resultSet2:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      dueTimeTo:
+                        type: integer
+                        example: 1000
+                      dueDate:
+                        type: integer
+                        example: 20210215
+                      requiredFromDate:
+                        type: integer
+                        example: 20210215
+                      customerContactTime:
+                        type: integer
+                        example: 1351
+                      timeZoneMarker:
+                        type: string
+                        example: "U"
+                      employeeCode:
+                        type: integer
+                        example: 88888
+                      customerNegotiated:
+                        type: string
+                        example: "Y"
+                      dueTimeFrom:
+                        type: integer
+                        example: 800
+                      installServiceResultsCode:
+                        type: string
+                        nullable: true
+                        example: ""
+                      customerContactDate:
+                        type: integer
+                        example: 20210212
+                      installServiceResultsDate:
+                        type: integer
+                        example: 0
+                      reasonNotCompleteCode:
+                        type: string
+                        nullable: true
+                        example: ""
+                      schedulingCode:
+                        type: string
+                        example: "A"

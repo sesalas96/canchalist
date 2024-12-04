@@ -15,7 +15,7 @@ const config = yaml.load(fs.readFileSync(configPath, 'utf8')) as Record<string, 
 // Load any .env variables into the config object only here
 // Set the port
 config.env = env;
-config.repository = 'mulesoft-api'; // change to corresponding mulesoft repository name that's on the base url
+config.repository = 'canchalist-api';
 config.port = Number(process.env.PORT) || Number(config.port) || 3000;
 
 export default config;

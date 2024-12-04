@@ -1,0 +1,457 @@
+get:
+    tags:
+        - prism/read-functions
+    summary: 'Service 0rder Search V2'
+    description: >
+        Perform a service order search using various parameters and return details about matching orders,
+        querying Solr for NNE or Siebel for Prism.
+    parameters:
+        - name: orderNumber
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: memberNumber
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+          description: >
+              This is the equivalent of the Member Phone number in Prism or the member field in the SOLR dataset.
+        - name: billingNumber
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+          description: >
+              This is the equivalent of the Billing Phone number in Prism or the BAN in Siebel.
+        - name: orderDueDate
+          in: query
+          required: false
+          schema:
+              type: string
+              format: date
+              nullable: true
+          description: >
+              Order due date in format `yyyyMMdd`.
+        - name: orderDueDateEnd
+          in: query
+          required: false
+          schema:
+              type: string
+              format: date
+              nullable: true
+          description: >
+              End of the order due date range in format `yyyyMMdd`.
+        - name: streetName
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: area
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: state
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+        - name: memberId
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+          description: >
+              This is the Member ID in Prism or the `serviceInstanceId` in Siebel.
+        - name: customerId
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+          description: >
+              This is the Customer ID in Prism or the CAN in Siebel.
+        - name: includeMessages
+          in: query
+          required: false
+          schema:
+              type: string
+              enum: [Y, N]
+          description: >
+              If `Y`, the response includes all process messages regarding the transaction.
+        - name: primaryOrdersOnly
+          in: query
+          required: false
+          schema:
+              type: string
+              enum: [Y, N]
+          description: >
+              Indicates whether both backside and frontside orders are included or just frontside orders. 
+              Applies to Prism only.
+    responses:
+        200:
+            description: Successful response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            settings:
+                                type: object
+                                $ref: '../../../components/schemas/settings.yaml#/schemas/Settings'
+                                nullable: true
+                                example:
+                                    sourceEnvironment: 'SITNNE'
+                                    clientApplication: 'COMMON_UI'
+                                    currentUser: 'KXCROWL'
+                                    transactionId: '3c77d010-8fbc-47bb-b7ed-512fff3d9209'
+                                    clientFunction: ''
+                                    activeBillId: ''
+                                    activeMemberId: ''
+                                    activeMemberNum: ''
+                                    sourceStack: 'NNE'
+                            messages:
+                                type: object
+                                $ref: '../../../components/schemas/common.yaml#/schemas/messageResultSet'
+                                example:
+                                    group: ''
+                                    sentToExtInterface: ''
+                                    callingProgram: ''
+                                    sqlStateCode: ''
+                                    dataSequence: 0
+                                    sqlStateText: ''
+                                    callingProcedure: ''
+                                    msgText: ''
+                                    msgSeverity: 50
+                                    sqlStateMsgId: ''
+                                    msgFile: ''
+                                    sentToMsgQueue: ''
+                                    guid: ''
+                                    dataAlias: ''
+                                    dataField: ''
+                                    msgId: ''
+                                    dataValue: ''
+                                    msgData: ''
+                                    dataFile: ''
+                            orders:
+                                type: array
+                                description: >
+                                    List of service orders matching the query criteria. Each order includes
+                                    detailed information about its status, customer, and associated attributes.
+                                items:
+                                    type: object
+                                    properties:
+                                        addressLine1:
+                                            type: string
+                                            example: 216 E PEBBLE CREEK ST
+                                        addressLine2:
+                                            type: string
+                                            example: APT 1
+                                        addressLine3:
+                                            type: string
+                                            example: ''
+                                        assignedBy:
+                                            type: integer
+                                            example: 0
+                                        backsideOrderExists:
+                                            type: string
+                                            example: N
+                                        backsideOrderStatus:
+                                            type: string
+                                            example: ''
+                                        billId:
+                                            type: integer
+                                            example: 93663748000
+                                        billingPhone:
+                                            type: integer
+                                            example: 9366374800
+                                        buildingName:
+                                            type: string
+                                            example: ''
+                                        busResInd:
+                                            type: string
+                                            example: N
+                                        cable:
+                                            type: string
+                                            example: ''
+                                        carrierCode:
+                                            type: string
+                                            example: 0561
+                                        changeDate:
+                                            type: integer
+                                            example: 20220303
+                                        changeUserName:
+                                            type: string
+                                            example: Director - Williams, Karin K.
+                                        circuitExternalFlag:
+                                            type: string
+                                            example: ''
+                                        cityAbbr:
+                                            type: string
+                                            example: LUF
+                                        cityDesc:
+                                            type: string
+                                            example: LUFKIN
+                                        commissionEmployeeCode:
+                                            type: integer
+                                            example: 0
+                                        completionDate:
+                                            type: integer
+                                            example: 20220303
+                                        country:
+                                            type: string
+                                            example: USA
+                                        county:
+                                            type: string
+                                            example: ''
+                                        cpniEmail:
+                                            type: string
+                                            example: ''
+                                        createdByApp:
+                                            type: string
+                                            example: PEGA_CRM
+                                        createdDate:
+                                            type: integer
+                                            example: 20220303
+                                        customerFirstName:
+                                            type: string
+                                            example: DAVID
+                                        customerId:
+                                            type: integer
+                                            example: 1294974
+                                        customerLastName:
+                                            type: string
+                                            example: FENLEY
+                                        customerNameFormat:
+                                            type: string
+                                            example: Y
+                                        customerNegotiated:
+                                            type: string
+                                            example: N
+                                        dateOfBirth:
+                                            type: integer
+                                            example: 0
+                                        digitalAccountId:
+                                            type: string
+                                            example: ''
+                                        disconnectReasonCode:
+                                            type: integer
+                                            example: 0
+                                        disconnectReasonCodeDesc:
+                                            type: string
+                                            example: ''
+                                        distinctiveRing:
+                                            type: integer
+                                            example: 0
+                                        effectiveDate:
+                                            type: integer
+                                            example: 0
+                                        environmentName:
+                                            type: string
+                                            example: TLQ1LUF
+                                        externalSalesAppLink:
+                                            type: string
+                                            example: ''
+                                        guid:
+                                            type: string
+                                            example: 220303-203308-915217-800615-0023
+                                        holdReason:
+                                            type: string
+                                            example: ''
+                                        issuedBy:
+                                            type: integer
+                                            example: 71013
+                                        issuedByName:
+                                            type: string
+                                            example: WILLIAMS, KARIN K.
+                                        leadChildGroup:
+                                            type: string
+                                            example: ''
+                                        memberFirstName:
+                                            type: string
+                                            example: DAVID
+                                        memberId:
+                                            type: integer
+                                            example: 236550
+                                        memberLastName:
+                                            type: string
+                                            example: FENLEY
+                                        memberNumber:
+                                            type: integer
+                                            example: 93663748000
+                                        monthlyRecurring:
+                                            type: number
+                                            format: float
+                                            example: 0.00
+                                        nonRecurring:
+                                            type: number
+                                            format: float
+                                            example: 0.00
+                                        officeEquipment:
+                                            type: string
+                                            example: ''
+                                        onHold:
+                                            type: string
+                                            example: ''
+                                        orderAction:
+                                            type: string
+                                            example: ''
+                                        orderClass:
+                                            type: string
+                                            example: G
+                                        orderClassHeadingDesc:
+                                            type: string
+                                            example: Modification of Existing Member
+                                        orderCompletionCode:
+                                            type: string
+                                            example: ''
+                                        orderDueDate:
+                                            type: integer
+                                            example: 20220308
+                                        orderDueTime:
+                                            type: integer
+                                            example: 800
+                                        orderGroup:
+                                            type: string
+                                            example: ''
+                                        orderNumber:
+                                            type: string
+                                            example: 0231519016
+                                        orderOldPhone:
+                                            type: integer
+                                            example: 0
+                                        orderPhone:
+                                            type: integer
+                                            example: 9366374800
+                                        orderPostedDate:
+                                            type: integer
+                                            example: 20220303
+                                        orderRowId:
+                                            type: string
+                                            example: ''
+                                        orderStageCode:
+                                            type: string
+                                            example: PST
+                                        orderStatus:
+                                            type: string
+                                            example: P
+                                        orderType:
+                                            type: string
+                                            example: RO
+                                        orderTypeDesc:
+                                            type: string
+                                            example: RECORDS ONLY
+                                        orderUpdateCode:
+                                            type: integer
+                                            example: 2
+                                        pair:
+                                            type: integer
+                                            example: 0
+                                        pairConnectionNumber:
+                                            type: integer
+                                            example: 0
+                                        physicalAddressZipCode:
+                                            type: string
+                                            example: 759047550
+                                        plantLoopTypeDesc:
+                                            type: string
+                                            example: FIBER
+                                        product:
+                                            type: string
+                                            example: ''
+                                        recordGuid:
+                                            type: string
+                                            example: KKWILLI
+                                        recordUserId:
+                                            type: string
+                                            example: ''
+                                        referralLength:
+                                            type: integer
+                                            example: 0
+                                        referralNumber:
+                                            type: integer
+                                            example: 0
+                                        relatedOrderNumber:
+                                            type: string
+                                            example: ''
+                                        requiredFromDate:
+                                            type: integer
+                                            example: 20220303
+                                        schedulingCode:
+                                            type: string
+                                            example: ''
+                                        serviceAccountNumber:
+                                            type: string
+                                            example: ''
+                                        serviceOrderCreateDate:
+                                            type: integer
+                                            example: 20220303
+                                        serviceTypeClass:
+                                            type: string
+                                            example: RE
+                                        serviceTypeClassDesc:
+                                            type: string
+                                            example: Residential
+                                        serviceTypeDesc:
+                                            type: string
+                                            example: RE-RES
+                                        stageReasonCode:
+                                            type: string
+                                            example: ''
+                                        stageReasonComments:
+                                            type: string
+                                            example: ''
+                                        state:
+                                            type: string
+                                            example: TX
+                                        streetDirection:
+                                            type: string
+                                            example: E
+                                        streetName:
+                                            type: string
+                                            example: PEBBLE CREEK
+                                        streetNumber:
+                                            type: integer
+                                            example: 216
+                                        streetSubdescription:
+                                            type: string
+                                            example: APT 1
+                                        streetSubtitle:
+                                            type: string
+                                            example: ST
+                                        subdivisionAbbr:
+                                            type: string
+                                            example: IDLWD
+                                        virtualCircuit:
+                                            type: string
+                                            example: ''
+                                        wireCenterArea:
+                                            type: string
+                                            example: Lufkin Main
+                                        streetPreDirection:
+                                            type: string
+                                            example: ''
+                                        streetPostDirection:
+                                            type: string
+                                            example: ''
+                                        orderComments:
+                                            type: string
+                                            example: ''
+                                        pegaCaseId:
+                                            type: string
+                                            example: ''
+                                        orderItems:
+                                            type: array
+                                            example: []
+                                        memberNameFormat:
+                                            type: string
+                                            example: Y

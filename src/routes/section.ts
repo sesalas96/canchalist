@@ -4,8 +4,6 @@ import SectionControllers from '@src/controllers/section';
 
 const router = Router();
 
-router.get(
-    ROUTES.SECTION.ENDPOINT_FUNCTION, SectionControllers.endpointFunction,
-);
+router.get(ROUTES.SECTION.ENDPOINT_FUNCTION, SectionControllers.endpointFunction);
 
 export default router;

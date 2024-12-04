@@ -1,0 +1,242 @@
+get:
+    tags:
+        - tl/bill
+    summary: Billing Info
+    description: >
+        Retrieve general billing information for a given order number, member number, or service account number.
+    parameters:
+        - name: orderNumber
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+          description: >
+              Applicable for both NNE and Prism. For NNE, if both `orderNumber` and `memberNumber` are specified,
+              this parameter (`orderNumber`) is disregarded.
+        - name: memberNumber
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+          description: >
+              PRISM MemberNumber (EXC || LIN || RES) or SIEBEL Phone Number || BAN.
+        - name: serviceAccountNumber
+          in: query
+          required: false
+          schema:
+              type: string
+              nullable: true
+          description: >
+              For NNE only.
+    responses:
+        200:
+            description: Successful response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            settings:
+                                type: object
+                                description: Metadata about the request and response.
+                                properties:
+                                    sourceEnvironment:
+                                        type: string
+                                        example: TLP1CON
+                                    clientApplication:
+                                        type: string
+                                        example: COMMON_UI
+                                    currentUser:
+                                        type: string
+                                        example: KXCROWL
+                                    transactionId:
+                                        type: string
+                                        example: 3c77d010-8fbc-47bb-b7ed-512fff3d9209
+                                    clientFunction:
+                                        type: string
+                                        example: 
+                                    activeBillId:
+                                        type: string
+                                        example: 
+                                    activeMemberId:
+                                        type: string
+                                        example: 
+                                    activeMemberNum:
+                                        type: string
+                                        example: 
+                                    sourceStack:
+                                        type: string
+                                        example: PRISM
+                            messages:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        group:
+                                            type: string
+                                            example: EIT3031RE
+                                        sentToExtInterface:
+                                            type: string
+                                            example: 
+                                        callingProgram:
+                                            type: string
+                                            example: EIT3031RE
+                                        sqlStateCode:
+                                            type: string
+                                            example: 
+                                        dataSequence:
+                                            type: integer
+                                            example: 0
+                                        sqlStateText:
+                                            type: string
+                                            example: 
+                                        callingProcedure:
+                                            type: string
+                                            example: EIA0110R
+                                        msgText:
+                                            type: string
+                                            example: Cursor EIT3031C01 opened on QTEMP.EIT3031P01 in EIT3031RE.
+                                        msgSeverity:
+                                            type: integer
+                                            example: 0
+                                        sqlStateMsgId:
+                                            type: string
+                                            example: 
+                                        msgFile:
+                                            type: string
+                                            example: ENVMSGF
+                                        sentToMsgQueue:
+                                            type: string
+                                            example: 
+                                        guid:
+                                            type: string
+                                            example: 21327EW0191224132540044382082218
+                                        dataAlias:
+                                            type: string
+                                            example: 
+                                        dataField:
+                                            type: string
+                                            example: 
+                                        msgId:
+                                            type: string
+                                            example: EIM0110
+                                        dataValue:
+                                            type: string
+                                            example: 
+                                        msgData:
+                                            type: string
+                                            example: EIT3031C01               QTEMP     EIT3031P01EIT3031RE
+                                        dataFile:
+                                            type: string
+                                            example: EIT3031P01
+                            resultSet2:
+                                type: array
+                                description: General billing information for the requested member or order.
+                                items:
+                                    type: object
+                                    properties:
+                                        memberId:
+                                            type: integer
+                                            example: 10040313
+                                        memberLastName:
+                                            type: string
+                                            example: ABBOTT
+                                        memberFirstName:
+                                            type: string
+                                            example: NANCY
+                                        memberNameFormat:
+                                            type: string
+                                            example: Y
+                                        mailingAddressLine1:
+                                            type: string
+                                            example: 203 RAINBOW DR BOX 10364
+                                        mailingAddressLine2:
+                                            type: string
+                                            example: 
+                                        mailingAddressLine3:
+                                            type: string
+                                            example: 
+                                        mailingCity:
+                                            type: string
+                                            example: LIVINGSTON
+                                        mailingState:
+                                            type: string
+                                            example: TX
+                                        mailingZipCode:
+                                            type: integer
+                                            example: 773990000
+                                        mailingAddressForeignFlag:
+                                            type: string
+                                            example: N
+                                        serviceType:
+                                            type: string
+                                            example: MR
+                                        serviceTypeDesc:
+                                            type: string
+                                            example: MR-RES LMS
+                                        billingMethod:
+                                            type: string
+                                            example: A
+                                        billingMethodDesc:
+                                            type: string
+                                            example: ADVANCE
+                                        creditRating:
+                                            type: string
+                                            example: R
+                                        creditRatingDesc:
+                                            type: string
+                                            example: CNS RESI NON LCL
+                                        autoPay:
+                                            type: string
+                                            example: Y
+                    example:
+                        settings:
+                            sourceEnvironment: TLP1CON
+                            clientApplication: COMMON_UI
+                            currentUser: KXCROWL
+                            transactionId: 3c77d010-8fbc-47bb-b7ed-512fff3d9209
+                            clientFunction: 
+                            activeBillId: 
+                            activeMemberId: 
+                            activeMemberNum: 
+                            sourceStack: PRISM
+                        messages:
+                            - group: EIT3031RE
+                              sentToExtInterface: 
+                              callingProgram: EIT3031RE
+                              sqlStateCode: 
+                              dataSequence: 0
+                              sqlStateText: 
+                              callingProcedure: EIA0110R
+                              msgText: Cursor EIT3031C01 opened on QTEMP.EIT3031P01 in EIT3031RE.
+                              msgSeverity: 0
+                              sqlStateMsgId: 
+                              msgFile: ENVMSGF
+                              sentToMsgQueue: 
+                              guid: 21327EW0191224132540044382082218
+                              dataAlias: 
+                              dataField: 
+                              msgId: EIM0110
+                              dataValue: 
+                              msgData: EIT3031C01               QTEMP     EIT3031P01EIT3031RE
+                              dataFile: EIT3031P01
+                        resultSet2:
+                            - memberId: 10040313
+                              memberLastName: ABBOTT
+                              memberFirstName: NANCY
+                              mailingAddressLine1: 203 RAINBOW DR BOX 10364
+                              mailingAddressLine2: 
+                              mailingAddressLine3: 
+                              mailingCity: LIVINGSTON
+                              mailingState: TX
+                              mailingZipCode: 773990000
+                              mailingAddressForeignFlag: N
+                              serviceType: MR
+                              serviceTypeDesc: MR-RES LMS
+                              billingMethod: A
+                              billingMethodDesc: ADVANCE
+                              creditRating: R
+                              creditRatingDesc: CNS RESI NON LCL
+                              autoPay: Y

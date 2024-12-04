@@ -1,0 +1,208 @@
+post:
+    tags:
+        - nne/nneitems
+    description: Get Available Appointment Windows
+    summary: Retrieves appointments from FICMS API.
+    requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object
+                    properties:
+                        servingWireCenter:
+                            type: string
+                            description: Serving wire center.
+                            example: 'BRBOVTMA'
+                        orderType:
+                            type: string
+                            description: Type of order (e.g., INTERNET).
+                            example: 'INTERNET'
+                        customerType:
+                            type: string
+                            description: Customer type (e.g., RESIDENTIAL).
+                            example: 'RESIDENTIAL'
+                        clockCategory:
+                            type: string
+                            description: Clock category (e.g., FIBER).
+                            example: 'FIBER'
+                        orderNumber:
+                            type: string
+                            description: Unique order number.
+                            example: 'DUMMY-01'
+                        searchWindowStartDate:
+                            type: number
+                            description: Start date of the search window in YYYYMMDD format.
+                            example: 20230607
+                        searchWindowStartTime:
+                            type: number
+                            description: Start time of the search window in HHMM format.
+                            example: 0
+                        searchWindowEndDate:
+                            type: number
+                            description: End date of the search window in YYYYMMDD format.
+                            example: 20230608
+                        searchWindowEndTime:
+                            type: number
+                            description: End time of the search window in HHMM format.
+                            example: 0
+                        preQualFlag:
+                            type: string
+                            description: Indicates if prequalification is required (Y/N).
+                            example: 'Y'
+    responses:
+        200:
+            description: Successful response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            settings:
+                                type: object
+                                $ref: '../../../components/schemas/settings.yaml#/schemas/Settings'
+                                nullable: true
+                                example:
+                                    sourceEnvironment: 'SITNNE'
+                                    clientApplication: 'COMMON_UI'
+                                    currentUser: 'KXCROWL'
+                                    transactionId: '3c77d010-8fbc-47bb-b7ed-512fff3d9209'
+                                    clientFunction: ''
+                                    activeBillId: ''
+                                    activeMemberId: ''
+                                    activeMemberNum: ''
+                                    sourceStack: 'NNE'
+                            messages:
+                                type: object
+                                $ref: '../../../components/schemas/common.yaml#/schemas/messageResultSet'
+                                example:
+                                    group: ''
+                                    sentToExtInterface: ''
+                                    callingProgram: ''
+                                    sqlStateCode: ''
+                                    dataSequence: 0
+                                    sqlStateText: ''
+                                    callingProcedure: ''
+                                    msgText: ''
+                                    msgSeverity: 50
+                                    sqlStateMsgId: ''
+                                    msgFile: ''
+                                    sentToMsgQueue: ''
+                                    guid: ''
+                                    dataAlias: ''
+                                    dataField: ''
+                                    msgId: ''
+                                    dataValue: ''
+                                    msgData: ''
+                                    dataFile: ''
+                          
+                            findRequestParams:
+                                type: array
+                                description: List of search parameters used in the request.
+                                items:
+                                    type: object
+                                    properties:
+                                        servingWireCenter:
+                                            type: string
+                                            example: 'BRBOVTMA'
+                                        orderType:
+                                            type: string
+                                            example: 'INTERNET'
+                                        customerType:
+                                            type: string
+                                            example: 'RESIDENTIAL'
+                                        clockCategory:
+                                            type: string
+                                            example: 'FIBER'
+                                        orderNumber:
+                                            type: string
+                                            example: 'DUMMY-01'
+                                        searchWindowStartDate:
+                                            type: number
+                                            example: 20230607
+                                        searchWindowStartTime:
+                                            type: number
+                                            example: 0
+                                        searchWindowEndDate:
+                                            type: number
+                                            example: 20230608
+                                        searchWindowEndTime:
+                                            type: number
+                                            example: 0
+                                        preQualFlag:
+                                            type: string
+                                            example: 'Y'
+                            appointmentWindows:
+                                type: array
+                                description: List of available appointment windows.
+                                items:
+                                    type: object
+                                    properties:
+                                        appointmentWindowId:
+                                            type: string
+                                            example: '2390'
+                                        appointmentStartDate:
+                                            type: number
+                                            example: 20230607
+                                        appointmentStartTime:
+                                            type: number
+                                            example: 1300
+                                        appointmentEndDate:
+                                            type: number
+                                            example: 20230607
+                                        appointmentEndTime:
+                                            type: number
+                                            example: 1500
+                    example:
+                        settings:
+                            sourceEnvironment: 'SITNNE'
+                            clientApplication: 'COMMON_UI'
+                            currentUser: 'KXCROWL'
+                            transactionId: '3c77d010-8fbc-47bb-b7ed-512fff3d9209'
+                            clientFunction: ''
+                            activeBillId: ''
+                            activeMemberId: ''
+                            activeMemberNum: ''
+                            sourceStack: 'NNE'
+                        findRequestParams:
+                            - servingWireCenter: 'BRBOVTMA'
+                              orderType: 'INTERNET'
+                              customerType: 'RESIDENTIAL'
+                              clockCategory: 'FIBER'
+                              orderNumber: 'DUMMY-01'
+                              searchWindowStartDate: 20230607
+                              searchWindowStartTime: 0
+                              searchWindowEndDate: 20230608
+                              searchWindowEndTime: 0
+                              preQualFlag: 'Y'
+                        appointmentWindows:
+                            - appointmentWindowId: '2390'
+                              appointmentStartDate: 20230607
+                              appointmentStartTime: 1300
+                              appointmentEndDate: 20230607
+                              appointmentEndTime: 1500
+                            - appointmentWindowId: '2391'
+                              appointmentStartDate: 20230607
+                              appointmentStartTime: 1500
+                              appointmentEndDate: 20230607
+                              appointmentEndTime: 1700
+                        messages:
+                            - group: ''
+                              sentToExtInterface: ''
+                              callingProgram: ''
+                              sqlStateCode: ''
+                              dataSequence: 0
+                              sqlStateText: ''
+                              callingProcedure: ''
+                              msgText: ''
+                              msgSeverity: 0
+                              sqlStateMsgId: ''
+                              msgFile: ''
+                              sentToMsgQueue: ''
+                              guid: ''
+                              dataAlias: ''
+                              dataField: ''
+                              msgId: ''
+                              dataValue: ''
+                              msgData: ''
+                              dataFile: ''

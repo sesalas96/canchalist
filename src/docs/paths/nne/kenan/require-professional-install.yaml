@@ -1,0 +1,126 @@
+post:
+    tags:
+        - nne/kenan
+    summary: Check if Professional Installation is Required
+    description: >
+        Identifies whether an order requires professional installation. Applicable for NNE only.
+    requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object
+                    properties:
+                        orderNumber:
+                            type: string
+                            example: '1-21473635851'
+                            description: Order number
+                        accountType:
+                            type: string
+                            example: 'Fidium Residential'
+                            description: Account type
+                        actionCode:
+                            type: string
+                            example: 'CHANGE'
+                            description: Action code
+                        memberNumber:
+                            type: string
+                            example: '1-8WXK5QI'
+                            description: Member number
+                        serialNumber:
+                            type: string
+                            example: '1-XK5QI'
+                            description: Serial number
+                        addressId:
+                            type: string
+                            example: '52101555'
+                            description: Address ID
+                        usoc:
+                            type: string
+                            example: 'FA1G'
+                            description: USOC (Universal Service Ordering Code)
+    responses:
+        '200':
+            description: Successful response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            settings:
+                                type: object
+                                $ref: '../../../components/schemas/settings.yaml#/schemas/Settings'
+                                nullable: true
+                                example:
+                                    sourceEnvironment: 'SITNNE'
+                                    clientApplication: 'COMMON_UI'
+                                    currentUser: 'KXCROWL'
+                                    transactionId: '3c77d010-8fbc-47bb-b7ed-512fff3d9209'
+                                    clientFunction: ''
+                                    activeBillId: ''
+                                    activeMemberId: ''
+                                    activeMemberNum: ''
+                                    sourceStack: 'NNE'
+                            messages:
+                                type: object
+                                $ref: '../../../components/schemas/common.yaml#/schemas/messageResultSet'
+                                example:
+                                    group: ''
+                                    sentToExtInterface: ''
+                                    callingProgram: ''
+                                    sqlStateCode: ''
+                                    dataSequence: 0
+                                    sqlStateText: ''
+                                    callingProcedure: ''
+                                    msgText: ''
+                                    msgSeverity: 50
+                                    sqlStateMsgId: ''
+                                    msgFile: ''
+                                    sentToMsgQueue: ''
+                                    guid: ''
+                                    dataAlias: ''
+                                    dataField: ''
+                                    msgId: ''
+                                    dataValue: ''
+                                    msgData: ''
+                                    dataFile: ''
+                            requires:
+                                type: object
+                                properties:
+                                    professionalInstall:
+                                        type: string
+                                        example: 'N'
+                                        description: Indicates if professional installation is required ("Y" or "N").
+                    example:
+                        settings:
+                            sourceEnvironment: 'SITNNE'
+                            sourceStack: ''
+                            clientApplication: ''
+                            currentUser: ''
+                            transactionId: ''
+                            clientFunction: ''
+                            activeBillId: ''
+                            activeMemberId: ''
+                            activeMemberNum: ''
+                        messages:
+                            - group: ''
+                              sentToExtInterface: ''
+                              callingProgram: ''
+                              sqlStateCode: ''
+                              dataSequence: 0
+                              sqlStateText: ''
+                              callingProcedure: ''
+                              msgText: ''
+                              msgSeverity: 0
+                              sqlStateMsgId: ''
+                              msgFile: ''
+                              sentToMsgQueue: ''
+                              guid: ''
+                              dataAlias: ''
+                              dataField: ''
+                              msgId: ''
+                              dataValue: ''
+                              msgData: ''
+                              dataFile: ''
+                        requires:
+                            professionalInstall: 'N'
