@@ -1,18 +1,18 @@
-/* eslint-disable object-curly-spacing */
-import { MongoClient, Db } from 'mongodb';
-import config from '@src/config';
+import mongoose from 'mongoose';
 
-// Configurar el cliente de MongoDB con el DSN y opciones
-const clientMongo = new MongoClient(config.mongoDBDSN, {
-    maxPoolSize: 30, // Configuración del tamaño máximo del pool
-});
+const connectMongo = async (): Promise<void> => {
+    try {
+        const mongoUri = process.env.MONGO_URI;
+        if (!mongoUri) {
+            throw new Error('Falta la variable MONGO_URI en el archivo .env');
+        }
 
-// Conectar al cliente de Mongo
-clientMongo.connect().catch((error) => {
-    console.error('Error al conectar a MongoDB:', error);
-    process.exit(1); // Salir si no se puede conectar
-});
-
-export const getDb = (dbName: string): Db => {
-    return clientMongo.db(dbName); // Retorna dinámicamente la conexión a la base de datos especificada
+        await mongoose.connect(mongoUri, { maxPoolSize: 30 });
+        console.log('Conexión a MongoDB establecida correctamente');
+    } catch (error) {
+        console.error('Error conectando a MongoDB:', error);
+        process.exit(1); // Salir del proceso si no se puede conectar
+    }
 };
+
+export default connectMongo;

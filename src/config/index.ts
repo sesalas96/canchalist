@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from 'fs';
 import yaml from 'js-yaml';
 import path from 'path';
@@ -17,6 +18,7 @@ const config = yaml.load(fs.readFileSync(configPath, 'utf8')) as Record<string, 
 config.env = env;
 config.repository = 'canchalist-api';
 config.mongoDBDSN = process.env.MONGO_URI;
+config.jwtSecret = process.env.JWT_SECRET;
 config.port = Number(process.env.PORT) || Number(config.port) || 3000;
 
 export default config;

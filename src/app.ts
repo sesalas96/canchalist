@@ -12,9 +12,10 @@ import httpContext from 'express-http-context';
 import { middleware } from 'express-openapi-validator';
 import logger from './lib/logger';
 import { specsObject, specsPath } from './docs';
+import connectMongo from './services/db/mongo';
 
 const app = express();
-const port = config.port;
+const PORT = config.port;
 
 // Middlewares
 app.use(httpContext.middleware);
@@ -46,6 +47,22 @@ app.use(ROUTES.API_DOCS, swaggerUi.serve, swaggerUi.setup(specsObject));
 
 app.use(errorHandler);
 
-app.listen(port, () => {
-    console.log(`App listening on port: ${port}`);
+// Función para inicializar la aplicación
+const startServer = async () => {
+    try {
+        // Conectar a MongoDB
+        await connectMongo();
+        console.log('Conexión a MongoDB exitosa');
+    } catch (error) {
+        console.error('Error al iniciar la aplicación:', error);
+        process.exit(1); // Salir del proceso si hay un error crítico
+    }
+};
+
+// Llamar a la función de inicio
+startServer();
+
+// Iniciar el servidor
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
