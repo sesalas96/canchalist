@@ -48,3 +48,4 @@ eslintcache
 
 .npmrc
 *-lock.json
+.env

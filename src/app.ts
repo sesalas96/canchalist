@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
+import bodyParser from 'body-parser';
 import errorHandler from './middlewares/errorHandler';
 import swaggerUi from 'swagger-ui-express';
 import apiRouter from './routes';
@@ -26,6 +27,10 @@ app.use(
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json({ limit: '50mb' }));
+
+// support encoded bodies
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 
 app.use(
     middleware({
