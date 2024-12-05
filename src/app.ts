@@ -51,7 +51,6 @@ app.use(errorHandler);
 const startServer = async () => {
     try {
         await connectMongo();
-        console.log('Conexión a MongoDB exitosa');
     } catch (error) {
         console.error('Error al iniciar la aplicación:', error);
         process.exit(1); // Salir del proceso si hay un error crítico

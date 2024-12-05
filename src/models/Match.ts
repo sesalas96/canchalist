@@ -25,10 +25,10 @@ const MatchSchema: Schema = new Schema(
 );
 
 // Middleware para excluir los documentos eliminados
-MatchSchema.pre<Query<any, Document>>(/^find/, function (next) {
-    this.where({ isDeleted: false });
-    next();
-});
+// MatchSchema.pre<Query<any, Document>>(/^find/, function (next) {
+//     this.where({ isDeleted: false });
+//     next();
+// });
 
 MatchSchema.methods.softDelete = async function () {
     this.isDeleted = true;

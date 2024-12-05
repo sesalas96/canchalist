@@ -113,7 +113,7 @@ export const restoreUser = async (req: Request, res: Response): Promise<void> =>
         const { id } = req.params;
 
         // Buscar el usuario eliminado por ID
-        const user: any = await User.findOne({ _id: id, isDeleted: true });
+        const user: any = await User.findOne({ _id: id });
         if (!user) {
             res.status(404).send({ message: 'Usuario no encontrado o no está eliminado' });
             return;

@@ -24,6 +24,6 @@ router.get(ROUTES.USERS.BY_ID, authenticateToken, getUserById);
 router.delete(ROUTES.USERS.BY_ID, authenticateToken, deleteUser);
 
 // Ruta para recuperar usuario por ID
-router.delete(ROUTES.USERS.RESTORE, authenticateToken, restoreUser);
+router.post(ROUTES.USERS.RESTORE, authenticateToken, restoreUser);
 
 export default router;

@@ -81,10 +81,10 @@ export const getGroupMembers = async (req: Request, res: Response): Promise<void
 // Eliminar a un grupo
 export const deleteGroup = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { groupId } = req.params;
+        const { id } = req.params;
 
         // Buscar el grupo por ID
-        const group: any = await Group.findById(groupId);
+        const group: any = await Group.findById(id);
         if (!group) {
             res.status(404).send({ message: 'Grupo no encontrado' });
             return;
@@ -102,10 +102,9 @@ export const deleteGroup = async (req: Request, res: Response): Promise<void> =>
 // Recupera un grupo oculto
 export const restoreGroup = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { groupId } = req.params;
-
+        const { id } = req.params;
         // Buscar el grupo eliminado por ID
-        const group: any = await Group.findOne({ _id: groupId, isDeleted: true });
+        const group: any = await Group.findOne({ _id: id });
         if (!group) {
             res.status(404).send({ message: 'Grupo no encontrado o no está eliminado' });
             return;

@@ -8,7 +8,6 @@ const connectMongo = async (): Promise<void> => {
         }
 
         await mongoose.connect(mongoUri, { maxPoolSize: 30 });
-        console.log('Conexión a MongoDB establecida correctamente');
     } catch (error) {
         console.error('Error conectando a MongoDB:', error);
         process.exit(1); // Salir del proceso si no se puede conectar

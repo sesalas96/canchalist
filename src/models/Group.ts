@@ -21,10 +21,10 @@ const GroupSchema: Schema = new Schema(
 );
 
 // Middleware para excluir grupos eliminados de las consultas
-GroupSchema.pre<Query<any, Document>>(/^find/, function (next) {
-    this.where({ isDeleted: false });
-    next();
-});
+// GroupSchema.pre<Query<any, Document>>(/^find/, function (next) {
+//     this.where({ isDeleted: false });
+//     next();
+// });
 
 GroupSchema.methods.softDelete = async function () {
     this.isDeleted = true;

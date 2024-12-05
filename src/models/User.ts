@@ -22,11 +22,12 @@ const UserSchema: Schema = new Schema(
     { timestamps: true },
 );
 
+// Allow recovery
 // Middleware para excluir los documentos eliminados
-UserSchema.pre<Query<any, Document>>(/^find/, function (next) {
-    this.where({ isDeleted: false });
-    next();
-});
+// UserSchema.pre<Query<any, Document>>(/^find/, function (next) {
+//     this.where({ isDeleted: false });
+//     next();
+// });
 
 UserSchema.methods.softDelete = async function () {
     this.isDeleted = true;
