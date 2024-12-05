@@ -86,13 +86,13 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-// Eliminar un
+// Eliminar un usuario (soft)
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { userId } = req.params;
+        const { id } = req.params;
 
         // Buscar el usuario por ID
-        const user = await User.findById(userId);
+        const user: any = await User.findById(id);
         if (!user) {
             res.status(404).send({ message: 'Usuario no encontrado' });
             return;
@@ -102,6 +102,27 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
         await user.softDelete();
 
         res.status(200).send({ message: 'Usuario eliminado correctamente (soft delete)', user });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+// Recuperar un usuario (soft)
+export const restoreUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+
+        // Buscar el usuario eliminado por ID
+        const user: any = await User.findOne({ _id: id, isDeleted: true });
+        if (!user) {
+            res.status(404).send({ message: 'Usuario no encontrado o no está eliminado' });
+            return;
+        }
+
+        // Restaurar el usuario usando el método del esquema
+        await user.restore();
+
+        res.status(200).send({ message: 'Usuario restaurado correctamente', user });
     } catch (error: any) {
         res.status(500).send({ error: error.message });
     }

@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { getUserById, loginUser, registerUser } from '@src/controllers/userController';
+import {
+    deleteUser,
+    getUserById,
+    loginUser,
+    registerUser,
+    restoreUser,
+} from '@src/controllers/userController';
 import { authenticateToken } from '@src/middlewares/authenticate';
 import { ROUTES } from '@src/constants';
 
@@ -14,7 +20,10 @@ router.post(ROUTES.USERS.LOGIN, loginUser);
 // Ruta para obtener usuario por ID
 router.get(ROUTES.USERS.BY_ID, authenticateToken, getUserById);
 
-// Ruta para obtener usuario por ID
-router.delete(ROUTES.USERS.BY_ID, authenticateToken, dele);
+// Ruta para eliminar usuario por ID
+router.delete(ROUTES.USERS.BY_ID, authenticateToken, deleteUser);
+
+// Ruta para recuperar usuario por ID
+router.delete(ROUTES.USERS.RESTORE, authenticateToken, restoreUser);
 
 export default router;

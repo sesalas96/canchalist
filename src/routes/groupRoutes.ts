@@ -30,7 +30,7 @@ router.get(ROUTES.GROUPS.MEMBERS, authenticateToken, getGroupMembers);
 // Ruta para eliminar un grupo
 router.delete(ROUTES.GROUPS.BY_ID, authenticateToken, deleteGroup);
 
-// Ruta para eliminar un grupo
+// Ruta para recuperar un grupo
 router.post(ROUTES.GROUPS.RESTORE, authenticateToken, restoreGroup);
 
 export default router;
