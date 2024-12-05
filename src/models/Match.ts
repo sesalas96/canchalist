@@ -36,4 +36,10 @@ MatchSchema.methods.softDelete = async function () {
     await this.save();
 };
 
+MatchSchema.methods.restore = async function () {
+    this.isDeleted = false;
+    this.deletedAt = null;
+    await this.save();
+};
+
 export default mongoose.model<IMatch>('Match', MatchSchema);

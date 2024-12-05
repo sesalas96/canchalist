@@ -77,3 +77,45 @@ export const getGroupMembers = async (req: Request, res: Response): Promise<void
         res.status(500).send({ error: error.message });
     }
 };
+
+// Eliminar a un grupo
+export const deleteGroup = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { groupId } = req.params;
+
+        // Buscar el grupo por ID
+        const group: any = await Group.findById(groupId);
+        if (!group) {
+            res.status(404).send({ message: 'Grupo no encontrado' });
+            return;
+        }
+
+        // Realizar el soft delete usando el método definido en el esquema
+        await group.softDelete();
+
+        res.status(200).send({ message: 'Grupo eliminado correctamente (soft delete)', group });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+// Recupera un grupo oculto
+export const restoreGroup = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { groupId } = req.params;
+
+        // Buscar el grupo eliminado por ID
+        const group: any = await Group.findOne({ _id: groupId, isDeleted: true });
+        if (!group) {
+            res.status(404).send({ message: 'Grupo no encontrado o no está eliminado' });
+            return;
+        }
+
+        // Restaurar el grupo usando el método definido en el esquema
+        await group.restore();
+
+        res.status(200).send({ message: 'Grupo restaurado correctamente', group });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+};

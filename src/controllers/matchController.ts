@@ -84,8 +84,6 @@ export const deleteMatch = async (req: Request, res: Response): Promise<void> =>
     try {
         const { groupId, matchId } = req.params;
 
-        console.log(req.params);
-
         // Verificar si el match existe dentro del grupo
         const match: any = await Match.findOne({ _id: matchId, groupId });
         if (!match) {
@@ -97,6 +95,27 @@ export const deleteMatch = async (req: Request, res: Response): Promise<void> =>
         await match.softDelete();
 
         res.status(200).send({ message: 'Mejenga eliminada correctamente' });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+// Recupera un grupo oculto
+export const restoreMatch = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { groupId, matchId } = req.params;
+
+        // Buscar el match eliminado por ID y grupo
+        const match: any = await Match.findOne({ _id: matchId, groupId, isDeleted: true });
+        if (!match) {
+            res.status(404).send({ message: 'Grupo no encontrado o no está eliminado' });
+            return;
+        }
+
+        // Restaurar el grupo usando el método definido en el esquema
+        await match.restore();
+
+        res.status(200).send({ message: 'Grupo restaurado correctamente', match });
     } catch (error: any) {
         res.status(500).send({ error: error.message });
     }

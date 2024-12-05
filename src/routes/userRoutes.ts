@@ -14,4 +14,7 @@ router.post(ROUTES.USERS.LOGIN, loginUser);
 // Ruta para obtener usuario por ID
 router.get(ROUTES.USERS.BY_ID, authenticateToken, getUserById);
 
+// Ruta para obtener usuario por ID
+router.delete(ROUTES.USERS.BY_ID, authenticateToken, dele);
+
 export default router;

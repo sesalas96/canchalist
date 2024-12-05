@@ -85,3 +85,24 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         res.status(500).send({ error: error.message });
     }
 };
+
+// Eliminar un
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { userId } = req.params;
+
+        // Buscar el usuario por ID
+        const user = await User.findById(userId);
+        if (!user) {
+            res.status(404).send({ message: 'Usuario no encontrado' });
+            return;
+        }
+
+        // Realizar el soft delete usando el método del esquema
+        await user.softDelete();
+
+        res.status(200).send({ message: 'Usuario eliminado correctamente (soft delete)', user });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+};
