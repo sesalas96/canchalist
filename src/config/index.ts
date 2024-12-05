@@ -16,7 +16,7 @@ const config = yaml.load(fs.readFileSync(configPath, 'utf8')) as Record<string, 
 // Load any .env variables into the config object only here
 // Set the port
 config.env = env;
-config.repository = 'canchalist-api';
+config.repository = 'mattchpoint';
 config.mongoDBDSN = process.env.MONGO_URI;
 config.jwtSecret = process.env.JWT_SECRET;
 config.port = Number(process.env.PORT) || Number(config.port) || 3000;

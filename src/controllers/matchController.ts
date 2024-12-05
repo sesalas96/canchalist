@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import Match from '../models/Match';
 import Group from '../models/Group';
@@ -73,6 +74,29 @@ export const joinMatch = async (req: Request, res: Response): Promise<void> => {
         await match.save();
 
         res.status(200).send({ message: 'Usuario añadido a la mejenga', match });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+// Soft delete a una mejenga
+export const deleteMatch = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { groupId, matchId } = req.params;
+
+        console.log(req.params);
+
+        // Verificar si el match existe dentro del grupo
+        const match: any = await Match.findOne({ _id: matchId, groupId });
+        if (!match) {
+            res.status(404).send({ message: 'Mejenga no encontrada' });
+            return;
+        }
+
+        // Soft delete
+        await match.softDelete();
+
+        res.status(200).send({ message: 'Mejenga eliminada correctamente' });
     } catch (error: any) {
         res.status(500).send({ error: error.message });
     }

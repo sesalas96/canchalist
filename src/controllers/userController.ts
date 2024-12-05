@@ -8,7 +8,7 @@ import config from '@src/config';
 // Obtener usuario por ID
 export const getUserById = async (req: Request, res: Response): Promise<void> => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.params.id).select('-password');
         if (!user) {
             res.status(404).send({ message: 'Usuario no encontrado' });
             return;

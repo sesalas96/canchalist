@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import User from '@src/models/User';
@@ -32,7 +33,7 @@ export const getGroupById = async (req: Request, res: Response): Promise<void> =
         }
         res.status(200).send(group);
     } catch (error: any) {
-        res.status(500).send({ error: error.message });
+        res.status(500).send({ message: 'Grupo no encontrado' });
     }
 };
 

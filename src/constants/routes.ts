@@ -1,7 +1,7 @@
 import config from '@src/config';
 
 export const ROUTES = {
-    BASE: `/${config.repository}-${config.env}/v1/`,
+    BASE: `/${config.repository}-${config.env}/v1`,
     API_DOCS: '/api-docs',
     USERS: {
         BASE: '/users',

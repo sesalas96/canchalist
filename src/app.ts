@@ -50,7 +50,6 @@ app.use(errorHandler);
 // Función para inicializar la aplicación
 const startServer = async () => {
     try {
-        // Conectar a MongoDB
         await connectMongo();
         console.log('Conexión a MongoDB exitosa');
     } catch (error) {
