@@ -102,11 +102,12 @@ export const deleteMatch = async (req: Request, res: Response): Promise<void> =>
 
 // Recupera un grupo oculto
 export const restoreMatch = async (req: Request, res: Response): Promise<void> => {
+    console.log('restoreUser');
     try {
         const { groupId, matchId } = req.params;
-
+        console.log('Sebas restoreMatch', groupId, matchId);
         // Buscar el match eliminado por ID y grupo
-        const match: any = await Match.findOne({ _id: matchId, groupId, isDeleted: true });
+        const match: any = await Match.findOne({ _id: matchId, groupId });
         if (!match) {
             res.status(404).send({ message: 'Grupo no encontrado o no está eliminado' });
             return;
@@ -116,6 +117,32 @@ export const restoreMatch = async (req: Request, res: Response): Promise<void> =
         await match.restore();
 
         res.status(200).send({ message: 'Grupo restaurado correctamente', match });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+// Actualizar mejenga
+export const updateMatch = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { matchId } = req.params;
+        const { date, location, players } = req.body;
+
+        // Buscar la mejenga por ID
+        const match = await Match.findById(matchId);
+        if (!match) {
+            res.status(404).send({ message: 'Mejenga no encontrada' });
+            return;
+        }
+
+        // Actualizar los campos permitidos
+        if (date) match.date = date;
+        if (location) match.location = location;
+        if (players) match.players = players;
+
+        await match.save();
+
+        res.status(200).send({ message: 'Mejenga actualizada correctamente', match });
     } catch (error: any) {
         res.status(500).send({ error: error.message });
     }

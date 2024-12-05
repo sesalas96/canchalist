@@ -5,6 +5,7 @@ import {
     loginUser,
     registerUser,
     restoreUser,
+    updateUser,
 } from '@src/controllers/userController';
 import { authenticateToken } from '@src/middlewares/authenticate';
 import { ROUTES } from '@src/constants';
@@ -25,5 +26,8 @@ router.delete(ROUTES.USERS.BY_ID, authenticateToken, deleteUser);
 
 // Ruta para recuperar usuario por ID
 router.post(ROUTES.USERS.RESTORE, authenticateToken, restoreUser);
+
+// Ruta para actualizar un usuario
+router.put(ROUTES.USERS.BY_ID, authenticateToken, updateUser);
 
 export default router;

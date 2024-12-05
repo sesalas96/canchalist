@@ -118,3 +118,29 @@ export const restoreGroup = async (req: Request, res: Response): Promise<void> =
         res.status(500).send({ error: error.message });
     }
 };
+
+// Actualizar un grupo
+export const updateGroup = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const { name, description, members } = req.body;
+
+        // Buscar el grupo por ID
+        const group = await Group.findById(id);
+        if (!group) {
+            res.status(404).send({ message: 'Grupo no encontrado' });
+            return;
+        }
+
+        // Actualizar los campos permitidos
+        if (name) group.name = name;
+        if (description) group.description = description;
+        if (members) group.members = members;
+
+        await group.save();
+
+        res.status(200).send({ message: 'Grupo actualizado correctamente', group });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+};

@@ -127,3 +127,34 @@ export const restoreUser = async (req: Request, res: Response): Promise<void> =>
         res.status(500).send({ error: error.message });
     }
 };
+
+//Actualizar usuario
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const { name, email, password } = req.body;
+
+        // Buscar el usuario por ID
+        const user = await User.findById(id);
+        if (!user) {
+            res.status(404).send({ message: 'Usuario no encontrado' });
+            return;
+        }
+
+        // Actualizar los campos permitidos
+        if (name) user.name = name;
+        if (email) user.email = email;
+
+        // Si hay una contraseña en la solicitud, hashearla antes de guardarla
+        if (password) {
+            const saltRounds = 10; // Número de rondas de sal
+            user.password = await bcrypt.hash(password, saltRounds);
+        }
+
+        await user.save();
+
+        res.status(200).send({ message: 'Usuario actualizado correctamente', user });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+};

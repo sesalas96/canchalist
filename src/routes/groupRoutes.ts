@@ -6,6 +6,7 @@ import {
     getGroupMembers,
     joinGroup,
     restoreGroup,
+    updateGroup,
 } from '@src/controllers/groupController';
 import { authenticateToken } from '@src/middlewares/authenticate';
 import { ROUTES } from '@src/constants';
@@ -32,5 +33,8 @@ router.delete(ROUTES.GROUPS.BY_ID, authenticateToken, deleteGroup);
 
 // Ruta para recuperar un grupo
 router.post(ROUTES.GROUPS.RESTORE, authenticateToken, restoreGroup);
+
+// Ruta para actualizar un grupo
+router.put(ROUTES.GROUPS.BY_ID, authenticateToken, updateGroup);
 
 export default router;

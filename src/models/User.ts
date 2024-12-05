@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import mongoose, { Document, Query, Schema } from 'mongoose';
+import mongoose, { Document, Schema, Query } from 'mongoose';
 
 // Interfaz para definir el tipo del modelo
 export interface IUser extends Document {

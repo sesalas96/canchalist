@@ -5,6 +5,7 @@ import {
     joinMatch,
     deleteMatch,
     restoreMatch,
+    updateMatch,
 } from '../controllers/matchController';
 import { ROUTES } from '@src/constants';
 import { authenticateToken } from '@src/middlewares/authenticate';
@@ -25,5 +26,8 @@ router.delete(ROUTES.MATCHES.BY_ID, authenticateToken, deleteMatch);
 
 // Recuperar una mejenga
 router.post(ROUTES.MATCHES.RESTORE, authenticateToken, restoreMatch);
+
+// Ruta para actualizar una mejenga
+router.put(ROUTES.MATCHES.BY_ID, authenticateToken, updateMatch);
 
 export default router;
