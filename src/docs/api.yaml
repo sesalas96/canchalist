@@ -55,3 +55,17 @@ paths:
                                     status:
                                         type: string
                                         example: up
+    /getUserById:
+        $ref: './paths/1_users/getUserById.yaml'
+components:
+    schemas:
+        Users:
+            $ref: './components/schemas/users.yaml#/schemas/User'
+        UserCreate:
+            $ref: './components/schemas/users.yaml#/schemas/UserCreate'
+        UserUpdate:
+            $ref: './components/schemas/users.yaml#/schemas/UserUpdate'
+        UserLogin:
+            $ref: './components/schemas/users.yaml#/schemas/UserLogin'
+        UserResponse:
+            $ref: './components/schemas/users.yaml#/schemas/UserResponse'

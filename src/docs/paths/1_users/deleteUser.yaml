@@ -1,0 +1,18 @@
+delete:
+    tags:
+        - Users
+    description: >
+        Soft deletes a specific user by their ID.
+    summary: Delete User (Soft Delete)
+    parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of the user to delete.
+          schema:
+              type: string
+    responses:
+        200:
+            description: User deleted successfully.
+        404:
+            description: User not found.

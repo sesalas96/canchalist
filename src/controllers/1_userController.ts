@@ -51,38 +51,44 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
 };
 
 // Inicio de sesión
-export const loginUser = async (req: Request, res: Response): Promise<void> => {
+export const loginUser = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
 
-        // Validación básica
+        // Validación de datos requeridos
         if (!email || !password) {
-            res.status(400).send({ message: 'Correo y contraseña son obligatorios' });
-            return;
+            return res.status(400).json({ message: 'Email and password are required.' });
         }
 
-        // Buscar usuario por correo
-        const user = await User.findOne({ email });
-        if (!user) {
-            res.status(404).send({ message: 'Usuario no encontrado' });
-            return;
+        // Buscar usuario por email
+        const user: any = await User.findOne({ email });
+
+        if (!user || user.isDeleted) {
+            return res.status(404).json({ message: 'Invalid email or user does not exist.' });
         }
 
-        // Verificar la contraseña
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            res.status(401).send({ message: 'Contraseña incorrecta' });
-            return;
+        // Verificar contraseña
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Invalid password.' });
         }
 
         // Generar token JWT
-        const token = jwt.sign({ id: user._id, email: user.email }, config.jwtSecret as string, {
+        const token = jwt.sign({ userId: user.id, email: user.email }, config.jwtSecret, {
             expiresIn: '1h',
         });
 
-        res.status(200).send({ message: 'Inicio de sesión exitoso', token });
+        res.status(200).json({
+            message: 'Login successful.',
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+            },
+        });
     } catch (error: any) {
-        res.status(500).send({ error: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 

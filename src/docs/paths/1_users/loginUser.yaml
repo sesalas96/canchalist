@@ -1,0 +1,49 @@
+post:
+    tags:
+        - Users
+    description: >
+        Authenticates a user using their email and password, and returns a JWT token if successful.
+    summary: Login User
+    requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    $ref: "#/components/schemas/UserLogin"
+                example:
+                    email: "john.doe@example.com"
+                    password: "password123"
+    responses:
+        200:
+            description: Login successful.
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            message:
+                                type: string
+                                example: Login successful.
+                            token:
+                                type: string
+                                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                            user:
+                                type: object
+                                properties:
+                                    id:
+                                        type: string
+                                        example: "64af1a2c6a4e4e231c9c634b"
+                                    name:
+                                        type: string
+                                        example: "John Doe"
+                                    email:
+                                        type: string
+                                        example: "john.doe@example.com"
+        400:
+            description: Email and password are required.
+        401:
+            description: Invalid password.
+        404:
+            description: Invalid email or user does not exist.
+        500:
+            description: Internal server error.

@@ -1,0 +1,38 @@
+patch:
+    tags:
+        - Users
+    description: >
+        Updates the details of a specific user by their ID.
+    summary: Update User
+    parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of the user to update.
+          schema:
+              type: string
+    requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    $ref: "#/components/schemas/UserUpdate"
+                example:
+                    name: "John Updated"
+                    email: "john.updated@example.com"
+    responses:
+        200:
+            description: User updated successfully.
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/User"
+                    example:
+                        id: "64af1a2c6a4e4e231c9c634b"
+                        name: "John Updated"
+                        email: "john.updated@example.com"
+                        isDeleted: false
+                        createdAt: "2024-12-01T10:00:00Z"
+                        updatedAt: "2024-12-01T12:00:00Z"
+        404:
+            description: User not found.

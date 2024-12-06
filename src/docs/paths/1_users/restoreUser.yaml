@@ -1,0 +1,29 @@
+post:
+    tags:
+        - Users
+    description: >
+        Restores a user that was previously soft deleted.
+    summary: Restore User
+    parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of the user to restore.
+          schema:
+              type: string
+    responses:
+        200:
+            description: User restored successfully.
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/User"
+                    example:
+                        id: "64af1a2c6a4e4e231c9c634b"
+                        name: "John Doe"
+                        email: "john.doe@example.com"
+                        isDeleted: false
+                        createdAt: "2024-12-01T10:00:00Z"
+                        updatedAt: "2024-12-01T10:00:00Z"
+        404:
+            description: User not found.
