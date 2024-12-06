@@ -5,9 +5,9 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Canchalist',
+            title: 'Mattchpoint',
             version: '1.0.0',
-            description: 'Canchalist',
+            description: 'Mattchpoint',
         },
         servers: [
             {

@@ -13,6 +13,7 @@ import { middleware } from 'express-openapi-validator';
 import logger from './lib/logger';
 import { specsObject, specsPath } from './docs';
 import connectMongo from './services/db/mongo';
+import '@src/services/cron/cronJobs';
 
 const app = express();
 const PORT = config.port;
