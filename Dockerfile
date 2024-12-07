@@ -21,8 +21,6 @@ RUN npm run test
 
 # Stage 2: Run the application
 FROM node:20
-COPY --chmod=0644 certs/*.crt /usr/local/share/ca-certificates/
-RUN update-ca-certificates
 RUN apt-get update && apt-get install -y awscli
 # Set the working directory
 WORKDIR /app
@@ -37,8 +35,8 @@ COPY --from=build /app/dist ./dist
 # Copy the .env file
 COPY .env ./
 
-# Add a user to run the application
-RUN useradd --user-group --create-home --shell /bin/false appuser
+# # Add a user to run the application
+# RUN useradd --user-group --create-home --shell /bin/false appuser
 
 # Change ownership of the application files
 RUN chown -R appuser:appuser /app
