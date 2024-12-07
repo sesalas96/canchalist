@@ -55,8 +55,8 @@ paths:
                                     status:
                                         type: string
                                         example: up
-    /getUserById:
-        $ref: './paths/1_users/getUserById.yaml'
+    # /getUserById:
+    #     $ref: './paths/1_users/getUserById.yaml'
 components:
     schemas:
         Users:

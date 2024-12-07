@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Notification from '@src/models/8_Notification';
+import Notification from '@src/models/10_Notification';
 import { Request, Response } from 'express';
 
 // Crear una nueva notificación

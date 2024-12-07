@@ -6,8 +6,9 @@ import {
     registerUser,
     restoreUser,
     updateUser,
+    listUsers,
 } from '@src/controllers/1_userController';
-import { authenticateToken } from '@src/middlewares/authenticate';
+import { auth } from '@src/middlewares/authenticate';
 import { ROUTES } from '@src/constants';
 
 const router = Router();
@@ -19,15 +20,18 @@ router.post(ROUTES.USERS.REGISTER, registerUser);
 router.post(ROUTES.USERS.LOGIN, loginUser);
 
 // Ruta para obtener usuario por ID
-router.get(ROUTES.USERS.BY_ID, authenticateToken, getUserById);
+router.get(ROUTES.USERS.BY_ID, auth, getUserById);
 
-// Ruta para eliminar usuario por ID
-router.delete(ROUTES.USERS.BY_ID, authenticateToken, deleteUser);
+// Ruta para listar todos los usuarios
+router.get(ROUTES.USERS.LIST, auth, listUsers);
+
+// Ruta para eliminar usuario por ID (soft delete)
+router.delete(ROUTES.USERS.DELETE, auth, deleteUser);
 
 // Ruta para recuperar usuario por ID
-router.post(ROUTES.USERS.RESTORE, authenticateToken, restoreUser);
+router.post(ROUTES.USERS.RESTORE, auth, restoreUser);
 
 // Ruta para actualizar un usuario
-router.put(ROUTES.USERS.BY_ID, authenticateToken, updateUser);
+router.put(ROUTES.USERS.UPDATE, auth, updateUser);
 
 export default router;

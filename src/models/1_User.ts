@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Document, Schema, Query } from 'mongoose';
+import bcrypt from 'bcrypt';
 
 // Interfaz para definir el tipo del modelo
 export interface IUser extends Document {
@@ -29,6 +30,11 @@ const UserSchema: Schema = new Schema(
 //     this.where({ isDeleted: false });
 //     next();
 // });
+
+// Método para comparar contraseñas
+UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+    return bcrypt.compare(candidatePassword, this.password);
+};
 
 UserSchema.methods.softDelete = async function () {
     this.isDeleted = true;

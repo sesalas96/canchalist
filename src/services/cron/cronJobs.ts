@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import logger from '@src/lib/logger';
-import Subscription from '@src/models/9_Subscription';
+import Subscription from '@src/models/11_Subscription';
 import cron from 'node-cron';
 
 // Tarea programada: desactivar suscripciones expiradas

@@ -144,3 +144,50 @@ export const updateGroup = async (req: Request, res: Response): Promise<void> =>
         res.status(500).send({ error: error.message });
     }
 };
+
+// Listar grupos con filtros opcionales y paginación
+export const listGroups = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { page = 1, limit = 10, name, includeDeleted } = req.query;
+
+        // Validar y convertir parámetros de paginación
+        const pageNumber = parseInt(page as string, 10);
+        const limitNumber = parseInt(limit as string, 10);
+
+        if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber <= 0 || limitNumber <= 0) {
+            res.status(400).send({ message: 'Page and limit must be positive numbers.' });
+            return;
+        }
+
+        // Construir filtros dinámicamente
+        const filters: any = { isDeleted: false }; // Por defecto, excluir eliminados
+        if (includeDeleted === 'true') delete filters.isDeleted; // Incluir eliminados si se solicita
+        if (name) filters.name = new RegExp(name as string, 'i'); // Búsqueda parcial (case-insensitive)
+
+        // Calcular el número de documentos a omitir para la paginación
+        const skip = (pageNumber - 1) * limitNumber;
+
+        // Consultar la base de datos con paginación y filtros
+        const groups = await Group.find(filters)
+            .populate('members', 'name email') // Opcional: devolver campos específicos de los miembros
+            .skip(skip)
+            .limit(limitNumber);
+
+        // Contar el total de grupos que coinciden con los filtros
+        const totalGroups = await Group.countDocuments(filters);
+
+        // Calcular el número total de páginas
+        const totalPages = Math.ceil(totalGroups / limitNumber);
+
+        // Enviar respuesta con datos paginados
+        res.status(200).send({
+            page: pageNumber,
+            limit: limitNumber,
+            totalPages,
+            totalGroups,
+            data: groups,
+        });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+};

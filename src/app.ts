@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
@@ -34,14 +35,14 @@ app.use(bodyParser.json({ limit: '50mb' }));
 // support encoded bodies
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 
-app.use(
-    middleware({
-        apiSpec: specsPath,
-        validateRequests: true,
-        validateResponses: false,
-        validateApiSpec: true,
-    }),
-);
+// app.use(
+//     middleware({
+//         apiSpec: specsPath,
+//         validateRequests: false,
+//         validateResponses: false,
+//         validateApiSpec: false,
+//     }),
+// );
 app.use(ROUTES.BASE, apiRouter);
 
 app.use(ROUTES.API_DOCS, swaggerUi.serve, swaggerUi.setup(specsObject));

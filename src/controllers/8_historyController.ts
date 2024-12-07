@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import History from '@src/models/6_History';
+import History from '@src/models/8_History';
 import { Request, Response } from 'express';
 
 // Crear un nuevo registro de historial
@@ -104,16 +104,42 @@ export const restoreHistory = async (req: Request, res: Response) => {
 };
 
 // Listar registros de historial con filtros opcionales
-export const listHistories = async (req: Request, res: Response) => {
+export const listHistories = async (req: Request, res: Response): Promise<void> => {
     try {
+        const { matchId, page = 1, limit = 10 } = req.query;
+
         const filters: any = {
-            ...req.query,
             isDeleted: false,
         };
 
-        const histories = await History.find(filters).populate('matchId');
+        if (matchId) filters.matchId = matchId;
 
-        res.status(200).json(histories);
+        const pageNumber = parseInt(page as string, 10);
+        const limitNumber = parseInt(limit as string, 10);
+        const skip = (pageNumber - 1) * limitNumber;
+
+        const histories = await History.find(filters)
+            .populate('matchId')
+            .populate({
+                path: 'reviews',
+                populate: [
+                    { path: 'reviewerId', select: 'name' },
+                    { path: 'targetId', select: 'name' },
+                ],
+            })
+            .skip(skip)
+            .limit(limitNumber);
+
+        const totalHistories = await History.countDocuments(filters);
+        const totalPages = Math.ceil(totalHistories / limitNumber);
+
+        res.status(200).json({
+            page: pageNumber,
+            limit: limitNumber,
+            totalPages,
+            totalHistories,
+            data: histories,
+        });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }

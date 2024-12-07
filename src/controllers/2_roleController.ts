@@ -103,19 +103,49 @@ export const restoreRole = async (req: Request, res: Response) => {
     }
 };
 
-// Listar roles con filtros opcionales
+// Listar roles con filtros opcionales y paginación
 export const listRoles = async (req: Request, res: Response) => {
     try {
+        const { page = 1, limit = 10, ...queryFilters } = req.query;
+
+        // Asegúrate de que `page` y `limit` sean números
+        const pageNumber = parseInt(page as string, 10);
+        const limitNumber = parseInt(limit as string, 10);
+
+        if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber <= 0 || limitNumber <= 0) {
+            return res.status(400).json({ message: 'Page and limit must be positive numbers.' });
+        }
+
+        // Construir filtros dinámicamente
         const filters: any = {
-            ...req.query,
+            ...queryFilters,
             isDeleted: false,
         };
 
-        const roles = await Role.find(filters)
-            .populate('userId', 'name email') // Opcional: devolver campos específicos del usuario
-            .populate('groupId', 'name'); // Opcional: devolver campos específicos del grupo
+        // Calcular `skip` para paginación
+        const skip = (pageNumber - 1) * limitNumber;
 
-        res.status(200).json(roles);
+        // Consulta a la base de datos con paginación
+        const roles = await Role.find(filters)
+            .populate('userId', 'name email') // Devuelve campos específicos del usuario
+            .populate('groupId', 'name') // Devuelve campos específicos del grupo
+            .skip(skip)
+            .limit(limitNumber);
+
+        // Contar el número total de roles que cumplen los filtros
+        const totalRoles = await Role.countDocuments(filters);
+
+        // Calcular el número total de páginas
+        const totalPages = Math.ceil(totalRoles / limitNumber);
+
+        // Respuesta
+        res.status(200).json({
+            page: pageNumber,
+            limit: limitNumber,
+            totalPages,
+            totalRoles,
+            data: roles,
+        });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }

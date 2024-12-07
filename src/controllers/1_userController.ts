@@ -66,16 +66,17 @@ export const loginUser = async (req: Request, res: Response) => {
         if (!user || user.isDeleted) {
             return res.status(404).json({ message: 'Invalid email or user does not exist.' });
         }
+        console.log(user);
 
         // Verificar contraseña
-        const isMatch = await user.comparePassword(password);
+        const isMatch = await user?.comparePassword(password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid password.' });
         }
 
         // Generar token JWT
         const token = jwt.sign({ userId: user.id, email: user.email }, config.jwtSecret, {
-            expiresIn: '1h',
+            expiresIn: '5h',
         });
 
         res.status(200).json({
@@ -134,7 +135,7 @@ export const restoreUser = async (req: Request, res: Response): Promise<void> =>
     }
 };
 
-//Actualizar usuario
+// Actualizar usuario
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
@@ -160,6 +161,45 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
         await user.save();
 
         res.status(200).send({ message: 'Usuario actualizado correctamente', user });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+// Listar todos los usuarios
+export const listUsers = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+
+        const pageNumber = parseInt(page as string, 10);
+        const limitNumber = parseInt(limit as string, 10);
+
+        if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber <= 0 || limitNumber <= 0) {
+            res.status(400).json({ message: 'Page and limit must be positive numbers.' });
+            return;
+        }
+
+        const skip = (pageNumber - 1) * limitNumber;
+
+        const { name, email } = req.query;
+
+        // Construir filtros dinámicamente
+        const filters: any = { isDeleted: false };
+        if (name) filters.name = new RegExp(name as string, 'i'); // Búsqueda parcial (case-insensitive)
+        if (email) filters.email = new RegExp(email as string, 'i');
+
+        const users = await User.find(filters).select('-password').skip(skip).limit(limitNumber);
+
+        const totalUsers = await User.countDocuments({ isDeleted: false });
+        const totalPages = Math.ceil(totalUsers / limitNumber);
+
+        res.status(200).send({
+            page: pageNumber,
+            limit: limitNumber,
+            totalPages,
+            totalUsers,
+            data: users,
+        });
     } catch (error: any) {
         res.status(500).send({ error: error.message });
     }

@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import config from '@src/config';
 import logger from '@src/lib/logger';
 
-export const authenticateToken = (req: any, res: Response, next: NextFunction): void => {
+export const auth = (req: any, res: Response, next: NextFunction): void => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
         res.status(401).send({ message: 'Acceso denegado' });
