@@ -4,6 +4,9 @@ import User from '../models/1_User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '@src/config';
+import Redis from 'ioredis';
+
+const redisClient = new Redis();
 
 // Obtener usuario por ID
 export const getUserById = async (req: Request, res: Response): Promise<void> => {
@@ -90,6 +93,38 @@ export const loginUser = async (req: Request, res: Response) => {
         });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+// Middleware para validar el token JWT
+export const validateToken = async (req: Request, res: Response, next: any) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Token no proporcionado' });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    try {
+        // Verifica si el token está revocado
+        const revoked = await isTokenRevoked(token);
+        if (revoked) {
+            return res.status(401).json({ message: 'Token revocado' });
+        }
+
+        // Verifica la validez del token
+        const decoded: any = jwt.verify(token, config.jwtSecret);
+
+        return res.status(200).json({
+            message: 'Token válido',
+            token,
+            user: decoded,
+        });
+    } catch (error: any) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token expirado' });
+        }
+        return res.status(401).json({ message: 'Token no válido' });
     }
 };
 
@@ -202,5 +237,37 @@ export const listUsers = async (req: Request, res: Response): Promise<void> => {
         });
     } catch (error: any) {
         res.status(500).send({ error: error.message });
+    }
+};
+
+// Almacena el token revocado con una expiración equivalente al tiempo de vida restante
+export const revokeToken = async (token: string, expiresIn: number) => {
+    await redisClient.set(token, 'revoked', 'EX', expiresIn);
+};
+
+// Verifica si el token está en la lista negra
+export const isTokenRevoked = async (token: string) => {
+    const result = await redisClient.get(token);
+    return result === 'revoked';
+};
+
+// Cierre de sesión
+export const logoutUser = async (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(400).json({ message: 'Token no proporcionado' });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    try {
+        // Revoca el token
+        const decoded: any = jwt.decode(token);
+        const expiresIn = decoded.exp - Math.floor(Date.now() / 1000);
+        await revokeToken(token, expiresIn);
+
+        return res.status(200).json({ message: 'Sesión cerrada y token revocado' });
+    } catch (error) {
+        return res.status(500).json({ message: 'Error al cerrar sesión', error });
     }
 };

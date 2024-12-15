@@ -3,7 +3,7 @@ import apiRouter from '@src/routes';
 import { ROUTES } from '@src/constants';
 import { specsPath } from '@src/docs';
 import { middleware } from 'express-openapi-validator';
-import errorHandler from '@src/middlewares/errorHandler';
+import { errorHandler } from '@src/middlewares/errorHandler';
 
 const testApp = express();
 

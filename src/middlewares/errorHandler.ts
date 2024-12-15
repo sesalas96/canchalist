@@ -1,14 +1,15 @@
-import { Request, Response } from 'express';
-import { error } from 'express-openapi-validator';
+import { Request, Response, NextFunction } from 'express';
 
-const errorHandler = (err: Error, req: Request, res: Response) => {
-    // Handling errors from express-openapi-validator
-    if (err instanceof error.BadRequest && err.errors) {
-        return res.status(err?.status).json({ errors: err.errors.map((error) => error.message) });
-    }
+export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error('Error:', err);
 
-    console.error(err.stack);
-    res.status(500).json({ error: 'Internal Server Error' });
+    const statusCode = err.status || 500;
+    const message = err.message || 'Internal Server Error';
+
+    res.status(statusCode).json({
+        error: {
+            message,
+            details: err.details || null,
+        },
+    });
 };
-
-export default errorHandler;

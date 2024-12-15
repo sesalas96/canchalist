@@ -16,6 +16,8 @@ export const ROUTES = {
         DELETE: '/users/:id', // Eliminar un usuario (soft delete)
         LIST: '/users', // Listar todos los usuarios
         UPDATE: '/users/:id', // Actualizar información de usuario
+        VALIDATE: '/users/validate', // Actualizar información de usuario
+        LOGOUT: '/users/logout',
     },
     ROLES: {
         BASE: '/roles',

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 import miscRouter from './0_misc';
 import usersRouter from './1_userRoutes';
 import rolesRouter from './2_roleRoutes';
